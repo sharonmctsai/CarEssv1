@@ -1,10 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Navbar, Nav, Container, Button, Card, Row, Col } from 'react-bootstrap';
-import { FaCarSide, FaTools, FaBell } from 'react-icons/fa'; //  using React Icons 
-import './Home.css'; // cretae css individually for design
+import { FaCarSide, FaTools, FaBell } from 'react-icons/fa'; // using React Icons
+import './Home.css'; // create css individually for design
 
 function Home() {
+  const location = useLocation();
+  const user = location.state?.user || 'Guest'; // 接收來自 login 的用戶資訊
+
   return (
     <>
       {/* Navigation */}
@@ -14,9 +17,21 @@ function Home() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link as={Link} to="/register">Register</Nav.Link>
-              <Nav.Link as={Link} to="/login">Log In</Nav.Link>
-              <Nav.Link as={Link} to="/admin-login">Admin</Nav.Link>
+              {user !== 'Guest' ? (
+                <>
+                <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
+                <Nav.Link as={Link} to="/reservation">Reservation</Nav.Link>
+                <Nav.Link disabled style={{ color: 'white' }}>Hello, {user}</Nav.Link>
+                </>
+                
+                
+              ) : (
+                <>
+                  <Nav.Link as={Link} to="/register">Register</Nav.Link>
+                  <Nav.Link as={Link} to="/login">Log In</Nav.Link>
+                  <Nav.Link as={Link} to="/admin-login">Admin</Nav.Link>
+                </>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -28,19 +43,25 @@ function Home() {
           <h1 className="display-4">Welcome to CarEss</h1>
           <p className="lead">"Booking Made Easy, Service Made Right."</p>
           <div className="mt-4">
-            <Button variant="primary" size="lg" as={Link} to="/register" className="mx-2">
-            Register
-            </Button>
-            <Button variant="secondary" size="lg" as={Link} to="/login" className="mx-2">
-              Log In
-            </Button>
+            {user === 'Guest' ? (
+              <>
+                <Button variant="primary" size="lg" as={Link} to="/register" className="mx-2">
+                  Register
+                </Button>
+                <Button variant="secondary" size="lg" as={Link} to="/login" className="mx-2">
+                  Log In
+                </Button>
+              </>
+            ) : (
+              <p className="lead">Welcome back, {user}!</p>
+            )}
           </div>
         </Container>
       </div>
 
-      {/* Serives */}
+      {/* Services */}
       <Container className="my-5">
-        <h2 className="text-center mb-4">Our Serives</h2>
+        <h2 className="text-center mb-4">Our Services</h2>
         <Row>
           <Col md={4} className="mb-4">
             <Card className="h-100 text-center">
@@ -48,7 +69,7 @@ function Home() {
                 <FaCarSide size={50} className="mb-3 text-primary" />
                 <Card.Title>Pre And Post NCT</Card.Title>
                 <Card.Text>
-                A Pre NCT is a vehicle check completed before a National Car Test 
+                  A Pre NCT is a vehicle check completed before a National Car Test
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -59,8 +80,7 @@ function Home() {
                 <FaTools size={50} className="mb-3 text-primary" />
                 <Card.Title>Car Servicing</Card.Title>
                 <Card.Text>
-                We provide top notch maintenance service for all types of vehicles
-
+                  We provide top notch maintenance service for all types of vehicles
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -71,7 +91,7 @@ function Home() {
                 <FaBell size={50} className="mb-3 text-primary" />
                 <Card.Title>Schedule Service</Card.Title>
                 <Card.Text>
-                Easily schedule your car’s service or test with just a few clicks
+                  Easily schedule your car’s service or test with just a few clicks
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -79,7 +99,7 @@ function Home() {
         </Row>
       </Container>
 
-      {/* footer */}
+      {/* Footer */}
       <footer className="bg-dark text-white text-center py-3">
         &copy; {new Date().getFullYear()} CarEss. All rights reserved.
       </footer>

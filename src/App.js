@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { UserProvider } from './context/UserContext'; 
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -9,6 +10,8 @@ import AdminDashboard from './components/AdminDashboard';
 
 function App() {
   return (
+    <UserProvider>
+
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -20,6 +23,8 @@ function App() {
 
       </Routes>
     </Router>
+    </UserProvider>
+
   );
 }
 
