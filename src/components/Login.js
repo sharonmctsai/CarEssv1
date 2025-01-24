@@ -17,7 +17,7 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:5000/api/login', {
+            const response = await fetch('http://localhost:5002/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -25,11 +25,12 @@ function Login() {
 
             if (response.ok) {
                 const result = await response.json();
-                // 保存用戶信息到全局狀態
+                // 保存用戶信息到全局狀態 save login details
                 setUser({ name: result.name, email: formData.email });
                 alert('Login successful');
-                // 跳轉到主頁
-                navigate('/');
+                // 跳轉到主頁 navigate to user dashboard
+                navigate('/dashboard', { state: { user: result.name } });
+
             } else {
                 const error = await response.json();
                 alert(error.error);

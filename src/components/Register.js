@@ -1,85 +1,105 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: ''
+    });
+    const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:5000/api/register', {
-        username,
-        password,
-        is_admin: false
-      });
-      alert('Login Successfully');
-      navigate('/login');
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-  };
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-  return (
-    <div style={styles.container}>
-      <h2>Register</h2>
-      <form onSubmit={handleRegister} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label>Username:</label>
-          <input 
-            type="text" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            required 
-            style={styles.input}
-          />
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('http://localhost:5002/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                alert('Registration successful');
+                navigate('/login'); // 跳轉到登入頁面 render to login page
+            } else {
+                const error = await response.json();
+                alert(error.error);
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+            alert('Network error: ${error.message}');
+        }
+    };
+
+    return (
+        <div style={styles.container}>
+            <h2 style={styles.title}>Register</h2>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    style={styles.input}
+                />
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    style={styles.input}
+                />
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    style={styles.input}
+                />
+                <button type="submit" style={styles.button}>Register</button>
+            </form>
         </div>
-        <div style={styles.formGroup}>
-          <label>Password:</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-            style={styles.input}
-          />
-        </div>
-        <button type="submit" style={styles.button}>Register</button>
-      </form>
-    </div>
-  );
+    );
 }
 
 const styles = {
-  container: {
-    maxWidth: '400px',
-    margin: '50px auto',
-    padding: '20px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  formGroup: {
-    marginBottom: '15px',
-  },
-  input: {
-    width: '100%',
-    padding: '8px',
-    marginTop: '5px',
-    boxSizing: 'border-box',
-  },
-  button: {
-    padding: '10px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    cursor: 'pointer',
-  },
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#f9f9f9',
+    },
+    title: {
+        fontSize: '24px',
+        marginBottom: '20px',
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '300px',
+    },
+    input: {
+        marginBottom: '15px',
+        padding: '10px',
+        fontSize: '16px',
+    },
+    button: {
+        padding: '10px',
+        fontSize: '16px',
+        backgroundColor: '#007BFF',
+        color: '#fff',
+        border: 'none',
+        cursor: 'pointer',
+    },
 };
 
 export default Register;

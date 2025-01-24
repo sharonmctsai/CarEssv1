@@ -13,11 +13,11 @@
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "frontend": "react-scripts start",
+    "backend": "cd ../CarEss-backend && python app.py"
   },
+  
   "browserslist": {
     "production": [
       ">0.2%",
