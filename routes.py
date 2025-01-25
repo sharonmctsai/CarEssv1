@@ -52,7 +52,12 @@ def login():
 def get_reservations():
     try:
         email = request.args.get('email')
+
+        if not email:
+            return jsonify({"error": "Email parameter is required"}), 400  # Ensure email is provided
+
         reservations = Reservation.query.filter_by(user_email=email).all()
+
         return jsonify([{
             "id": r.id,
             "service_type": r.service_type,
@@ -63,6 +68,7 @@ def get_reservations():
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
+
 
 @auth.route('/api/available-times', methods=['GET'])
 def get_available_times():
