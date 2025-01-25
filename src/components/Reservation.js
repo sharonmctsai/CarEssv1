@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // Add useContext here
 import { Container, Form, Button, Row, Col, Card, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { UserContext } from '../context/UserContext'; // Import UserContext
 
 function Reservation() {
-    const [step, setStep] = useState(1); // 步驟控制
+    const { user } = useContext(UserContext); // Get logged-in user
+    const [step, setStep] = useState(1); // 步驟控制 step control
     const [formData, setFormData] = useState({
         service_type: '',
         date: '',
@@ -42,7 +44,7 @@ function Reservation() {
             const response = await fetch('http://localhost:5002/api/reserve', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formData, user_email: 'user@example.com' }),
+                body: JSON.stringify({ ...formData, user_email: user?.email }),
             });
 
             if (response.ok) {
