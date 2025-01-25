@@ -2,8 +2,9 @@ from flask import Blueprint, request, jsonify
 from models import db, User, Reservation
 from datetime import datetime
 
-# 創建 Blueprint
+# setup Blueprint
 auth = Blueprint('auth', __name__)
+
 
 @auth.route('/api/register', methods=['POST'])
 def register():
@@ -100,7 +101,7 @@ def reserve():
             date=datetime.strptime(date, "%Y-%m-%d").date(),
             time=datetime.strptime(time, "%H:%M").time(),
             user_email=user_email,
-            status="Pending",  # You can adjust the default status as per your logic
+            status="Pending",  #  can adjust the default status
         )
 
         # Add the reservation to the database
@@ -124,7 +125,21 @@ def reserve():
         return jsonify({"error": "Internal Server Error"}), 500
 
 
+# Define the cancel reservation route
+@auth.route("/api/cancel-reservation/<int:id>", methods=["DELETE", "OPTIONS"])
+def cancel_reservation(id):
+    if request.method == "OPTIONS":
+        return "", 200  # Handle OPTIONS request for preflight
 
+  # Cancel reservation logic (delete from DB)
+    reservation = Reservation.query.filter_by(id=id).first()
+
+    if reservation:
+        db.session.delete(reservation)  # Delete the reservation
+        db.session.commit()  # Commit the changes to the database
+        return jsonify({"message": "Reservation cancelled successfully"}), 200
+    else:
+        return jsonify({"error": "Reservation not found"}), 404
     
 
     

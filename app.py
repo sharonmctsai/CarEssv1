@@ -1,28 +1,27 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from models import db  # 使用 models.py 中的 db 實例
+from models import db  # use models.py  db exaplme
 from routes import auth
 
-# 創建 Flask 應用
+# setup Flask 
 app = Flask(__name__)
 
-# 啟用 CORS
-CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type"]}})
+# allow CORS for all routes
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "DELETE", "OPTIONS"], "allow_headers": ["Content-Type"]}})
 
 
-
-# SQLite 配置
+# SQLite 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# 初始化 SQLAlchemy 與 Flask 應用
+# ini SQLAlchemy & Flask 
 db.init_app(app)
 
-# 註冊 Blueprint
+#  register Blueprint
 app.register_blueprint(auth)
 
-# 創建數據庫
+# database
 with app.app_context():
     db.create_all()
 
