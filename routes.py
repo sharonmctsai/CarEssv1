@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import db, User, Reservation
+from datetime import datetime
 
 # 創建 Blueprint
 auth = Blueprint('auth', __name__)
@@ -45,6 +46,7 @@ def login():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
+
 @auth.route('/api/reservations', methods=['GET'])
 def get_reservations():
     try:
@@ -73,3 +75,56 @@ def get_available_times():
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
+    
+@auth.route('/api/reserve', methods=['POST', 'OPTIONS'])
+def reserve():
+    if request.method == 'OPTIONS':
+        # Respond to the OPTIONS preflight request
+        return '', 200  # Just return an empty response with status 200
+
+    try:
+        # Receive the reservation data from the frontend
+        data = request.get_json()
+        service_type = data.get('service_type')
+        date = data.get('date')
+        time = data.get('time')
+        user_email = data.get('user_email')
+
+        # Ensure the necessary data is provided
+        if not all([service_type, date, time, user_email]):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Create a new reservation instance
+        new_reservation = Reservation(
+            service_type=service_type,
+            date=datetime.strptime(date, "%Y-%m-%d").date(),
+            time=datetime.strptime(time, "%H:%M").time(),
+            user_email=user_email,
+            status="Pending",  # You can adjust the default status as per your logic
+        )
+
+        # Add the reservation to the database
+        db.session.add(new_reservation)
+        db.session.commit()
+
+        # Return the created reservation data as response
+        return jsonify({
+            "message": "Reservation successful",
+            "reservation": {
+                "id": new_reservation.id,
+                "service_type": new_reservation.service_type,
+                "date": new_reservation.date.strftime("%Y-%m-%d"),
+                "time": new_reservation.time.strftime("%H:%M"),
+                "status": new_reservation.status
+            }
+        }), 200
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+
+
+    
+
+    

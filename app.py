@@ -8,7 +8,9 @@ from routes import auth
 app = Flask(__name__)
 
 # 啟用 CORS
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type"]}})
+
+
 
 # SQLite 配置
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'

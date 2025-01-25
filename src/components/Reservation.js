@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Form, Button, Row, Col, Card, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function Reservation() {
     const [step, setStep] = useState(1); // 步驟控制
@@ -10,6 +11,7 @@ function Reservation() {
     });
     const [availableTimes, setAvailableTimes] = useState([]);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate(); // Use the navigate hook for redirection
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,12 +19,21 @@ function Reservation() {
 
     useEffect(() => {
         if (formData.date) {
+            setLoading(true);
             fetch(`http://localhost:5002/api/available-times?date=${formData.date}`)
                 .then(res => res.json())
-                .then(data => setAvailableTimes(data.available_times))
-                .catch(err => console.error(err));
+                .then(data => {
+                    console.log("API Response:", data); // Debug API response
+                    setAvailableTimes(data.available_times || []); // Ensure it's an array
+                })
+                .catch(err => {
+                    console.error("Error fetching available times:", err);
+                    setAvailableTimes([]); // Prevent infinite loading
+                })
+                .finally(() => setLoading(false)); // Stop loading after request
         }
     }, [formData.date]);
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,6 +49,8 @@ function Reservation() {
                 alert('Reservation successful!');
                 setFormData({ service_type: '', date: '', time: '' });
                 setStep(1);
+                 // Redirect to the user dashboard after reservation
+                 navigate('/dashboard'); // Redirects to dashboard
             } else {
                 const error = await response.json();
                 alert(error.error);
@@ -102,24 +115,27 @@ function Reservation() {
 
             {step === 3 && (
                 <Form onSubmit={handleSubmit}>
-                    <Form.Group>
-                        <Form.Label>Time</Form.Label>
-                        {availableTimes.length > 0 ? (
-                            <Form.Control 
-                                as="select" 
-                                name="time" 
-                                value={formData.time} 
-                                onChange={handleChange} 
-                                required>
-                                <option value="">Select a time</option>
-                                {availableTimes.map(time => (
-                                    <option key={time} value={time}>{time}</option>
-                                ))}
-                            </Form.Control>
-                        ) : (
-                            <Spinner animation="border" />
-                        )}
-                    </Form.Group>
+                   <Form.Group>
+    <Form.Label>Time</Form.Label>
+    {loading ? ( 
+        <Spinner animation="border" />
+    ) : availableTimes.length > 0 ? (
+        <Form.Control 
+            as="select" 
+            name="time" 
+            value={formData.time} 
+            onChange={handleChange} 
+            required>
+            <option value="">Select a time</option>
+            {availableTimes.map(time => (
+                <option key={time} value={time}>{time}</option>
+            ))}
+        </Form.Control>
+    ) : (
+        <Spinner animation="border" />
+    )}
+</Form.Group>
+
                     <Button variant="primary" type="submit" className="mt-3" disabled={!formData.time}>
                         {loading ? "Submitting..." : "Submit Reservation"}
                     </Button>
