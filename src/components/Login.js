@@ -108,7 +108,7 @@ const styles = {
     button: {
         padding: '10px',
         fontSize: '16px',
-        backgroundColor: '#007BFF',
+        backgroundColor: '#00ff84',
         color: '#fff',
         border: 'none',
         cursor: 'pointer',

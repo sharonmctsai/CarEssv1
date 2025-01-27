@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Alert, Table, Spinner, Badge } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { FaCalendarCheck, FaClock, FaHistory, FaTimesCircle } from 'react-icons/fa';
+import { Link,useNavigate } from 'react-router-dom';
+import { FaCalendarCheck, FaClock, FaHistory, FaTimesCircle, FaSignOutAlt } from 'react-icons/fa';
 import { UserContext } from '../context/UserContext'; // 引入 UserContext
 
 function UserDashboard() {
-    const { user } = useContext(UserContext); // 從全局上下文獲取用戶信息
+    const { user,setUser } = useContext(UserContext); // 從全局上下文獲取用戶信息
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         if (user?.email) {
@@ -44,6 +46,12 @@ function UserDashboard() {
             .catch((err) => alert('Network error. Please try again.'));
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('user'); // Clear user from localStorage
+        setUser(null); // Clear user context
+        navigate('/login'); // Redirect to login page
+    };
+
     return (
         <div className="user-dashboard" style={styles.background}>
             <Container className="my-5">
@@ -58,6 +66,9 @@ function UserDashboard() {
                     <Col className="text-end">
                         <Button variant="success" as={Link} to="/reservation" className="shadow">
                             <FaCalendarCheck className="me-2" /> Make a New Reservation
+                        </Button>
+                        <Button variant="danger" onClick={handleLogout} className="shadow">
+                            <FaSignOutAlt className="me-2" /> Logout
                         </Button>
                     </Col>
                 </Row>
