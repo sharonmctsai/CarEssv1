@@ -1,50 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext'; // 引入全局上下文
-import styled from 'styled-components';
-
-// Styled components
-const StyledButton = styled.button`
-    padding: 10px;
-    font-size: 16px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-        background-color: #0056b3;
-    }
-`;
-
-const StyledInput = styled.input`
-    margin-bottom: 15px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-`;
-
-const StyledForm = styled.form`
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-`;
-
-const StyledContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f9f9f9;
-`;
-
-const StyledTitle = styled.h2`
-    font-size: 24px;
-    margin-bottom: 20px;
-`;
 
 function Login() {
     const { setUser } = useContext(UserContext); // 獲取上下文的 setUser 方法
@@ -52,7 +8,8 @@ function Login() {
         email: '',
         password: ''
     });
-    const [error, setError] = useState(''); // Add error state
+    const [error, setError] = useState(''); // Define error state
+    const [isHovered, setIsHovered] = useState(false);
 
     const navigate = useNavigate();
 
@@ -62,6 +19,8 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(''); // Reset error message before submitting
+
         try {
             const response = await fetch('http://localhost:5002/api/login', {
                 method: 'POST',
@@ -71,54 +30,90 @@ function Login() {
 
             if (response.ok) {
                 const result = await response.json();
-                // 保存用戶信息到全局狀態
-                // Save user details to localStorage
+              
+            // Save user details to localStorage
             localStorage.setItem('user', JSON.stringify({ name: result.name, email: formData.email }));
-                // Update the context state
-
                 setUser({ name: result.name, email: formData.email });
-                console.log('API Response:', result); // Debugging: Log the API response
-                console.log('User set:', { name: result.name, email: result.email }); // Debugging
-
                 alert('Login successful');
-                // 跳轉到主頁
+
+                // 跳轉到主頁 navigate to user dashboard
                 navigate('/dashboard', { state: { user: result.name } });
 
             } else {
-                const errorData = await response.json();
-                setError(errorData.error || 'Login failed. Please try again.');
-
+                const error = await response.json();
+                alert(error.error);
             }
         } catch (error) {
             console.error("Network error:", error);
             alert('Network error. Please try again.');
         }
     };
-    
 
     return (
-        <StyledContainer>
-            <StyledTitle>Login</StyledTitle>
-            <StyledForm onSubmit={handleSubmit}>
-                <StyledInput
+        <div style={styles.container}>
+            <h2 style={styles.title}>Login</h2>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <input
                     type="email"
                     name="email"
                     placeholder="Email"
                     value={formData.email}
                     onChange={handleChange}
+                    style={styles.input}
                 />
-                <StyledInput
+                <input
                     type="password"
                     name="password"
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleChange}
+                    style={styles.input}
                 />
-                <StyledButton type="submit">Login</StyledButton>
-            </StyledForm>
-        </StyledContainer>
+<button
+    type="submit"
+    style={{ ...styles.button, backgroundColor: isHovered ? '#0056b3' : '#007BFF' }}
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+>
+    Login
+</button>
+            </form>
+        </div>
     );
 }
 
+const styles = {
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#f9f9f9',
+    },
+    title: {
+        fontSize: '24px',
+        marginBottom: '20px',
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '300px',
+    },
+    input: {
+        marginBottom: '15px',
+        padding: '10px',
+        fontSize: '16px',
+    },
+    button: {
+        padding: '10px',
+        fontSize: '16px',
+        backgroundColor: '#007BFF',
+        color: '#fff',
+        border: 'none',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s ease-in-out',
+    },
+};
 
 export default Login;
