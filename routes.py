@@ -41,7 +41,12 @@ def login():
         # 查詢用戶
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
-            return jsonify({"message": "Login successful"}), 200
+            # Return user details along with the success message
+            return jsonify({
+                "message": "Login successful",
+                "name": user.name,  # Include the user's name
+                "email": user.email  # Include the user's email
+            }), 200
         return jsonify({"error": "Invalid email or password"}), 401
     except Exception as e:
         print(f"Error occurred: {e}")
