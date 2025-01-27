@@ -1,17 +1,25 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../context/UserContext'; // 引入全局上下文
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { UserContext } from '../context/UserContext'; 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
-    const { setUser } = useContext(UserContext); // 獲取上下文的 setUser 方法
+    const { setUser } = useContext(UserContext); 
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
-    const [error, setError] = useState(''); // Define error state
     const [isHovered, setIsHovered] = useState(false);
-
     const navigate = useNavigate();
+    const location = useLocation(); // Get location state
+
+    useEffect(() => {
+        // Show toast if user is redirected from a protected route
+        if (location.state?.from) {
+            toast.warn('Please log in to continue.', { autoClose: 3000 });
+        }
+    }, [location]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,7 +27,6 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(''); // Reset error message before submitting
 
         try {
             const response = await fetch('http://localhost:5002/api/login', {
@@ -31,21 +38,21 @@ function Login() {
             if (response.ok) {
                 const result = await response.json();
               
-            // Save user details to localStorage
-            localStorage.setItem('user', JSON.stringify({ name: result.name, email: formData.email }));
+                // Save user details to localStorage
+                localStorage.setItem('user', JSON.stringify({ name: result.name, email: formData.email }));
                 setUser({ name: result.name, email: formData.email });
-                alert('Login successful');
 
-                // 跳轉到主頁 navigate to user dashboard
+                toast.success('Login successful!', { autoClose: 2000 });
+
+                // Navigate to user dashboard
                 navigate('/dashboard', { state: { user: result.name } });
-
             } else {
                 const error = await response.json();
-                alert(error.error);
+                toast.error(error.error, { autoClose: 3000 }); // Use toast instead of alert
             }
         } catch (error) {
             console.error("Network error:", error);
-            alert('Network error. Please try again.');
+            toast.error('Network error. Please try again.', { autoClose: 3000 });
         }
     };
 
@@ -69,14 +76,14 @@ function Login() {
                     onChange={handleChange}
                     style={styles.input}
                 />
-<button
-    type="submit"
-    style={{ ...styles.button, backgroundColor: isHovered ? '#0056b3' : '#007BFF' }}
-    onMouseEnter={() => setIsHovered(true)}
-    onMouseLeave={() => setIsHovered(false)}
->
-    Login
-</button>
+                <button
+                    type="submit"
+                    style={{ ...styles.button, backgroundColor: isHovered ? '#0056b3' : '#007BFF' }}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    Login
+                </button>
             </form>
         </div>
     );
@@ -108,7 +115,7 @@ const styles = {
     button: {
         padding: '10px',
         fontSize: '16px',
-        backgroundColor: '#00ff84',
+        backgroundColor: '#28a745',
         color: '#fff',
         border: 'none',
         cursor: 'pointer',
