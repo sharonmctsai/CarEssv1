@@ -25,9 +25,12 @@ function Login() {
 
             if (response.ok) {
                 const result = await response.json();
-                // 保存用戶信息到全局狀態 save login details
+              
+            // Save user details to localStorage
+            localStorage.setItem('user', JSON.stringify({ name: result.name, email: formData.email }));
                 setUser({ name: result.name, email: formData.email });
                 alert('Login successful');
+                
                 // 跳轉到主頁 navigate to user dashboard
                 navigate('/dashboard', { state: { user: result.name } });
 
