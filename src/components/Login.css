@@ -1,0 +1,81 @@
+/* Background: Futuristic Dark Theme */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #1a1a2e, #16213e); /* Dark blue gradient */
+}
+
+/* Centered Glassmorphism Form */
+.login-form {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 10px rgba(76, 201, 240, 0.2); /* Light blue shadow */
+    text-align: center;
+    width: 350px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Pop-out effect on hover */
+.login-form:hover {
+    transform: scale(1.05); /* Slightly enlarge */
+    box-shadow: 0px 8px 20px rgba(76, 201, 240, 0.5); /* Glowing effect */
+}
+
+/* Title */
+.login-form h2 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Input Fields - Neon Light Blue Glow */
+.form-control {
+    background: transparent;
+    border: 2px solid #4cc9f0; /* Light Blue */
+    color: #fff;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-control:focus {
+    border-color: #4cc9f0;
+    box-shadow: 0 0 10px #4cc9f0;
+    background: transparent;
+}
+
+/* Neon Button - Light Blue */
+.neon-button {
+    background-color: #4cc9f0;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 8px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.neon-button:hover {
+    background-color: #3da9d5;
+    box-shadow: 0 0 15px #4cc9f0;
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+    .login-form {
+        width: 90%;
+    }
+}

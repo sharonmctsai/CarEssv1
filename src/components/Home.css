@@ -1,31 +1,172 @@
+/* Importing Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
+
+/* Hero Section */
 .hero-section {
-    background-color: #343a40; /* dark bg */
-    height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
+  background: linear-gradient(135deg, #1d1d1d, #005bff); /* Futuristic gradient background */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif; /* Futuristic font */
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* Dark overlay */
+}
+
+.hero-section .text-center {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-section h1 {
+  font-size: 4rem;
+  font-weight: 700;
+  text-shadow: 0 0 20px rgba(0, 255, 255, 0.8); /* Glowing effect */
+}
+
+.hero-section .lead {
+  font-size: 1.5rem;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8); /* Subtle glowing */
+}
+
+.hero-section .btn {
+  font-size: 1.25rem;
+  padding: 12px 25px;
+  margin: 10px;
+  transition: transform 0.3s ease, background-color 0.3s ease-in-out, box-shadow 0.3s ease;
+  border-radius: 50px;
+  background-color: #00bcd4;
+  border: 2px solid #00bcd4;
+  color: #fff;
+}
+
+.hero-section .btn:hover {
+  transform: translateY(-5px);
+  background-color: #008c9e;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 1);
+}
+
+/* Services Section */
+.my-5 {
+  margin-top: 6rem;
+  margin-bottom: 6rem;
+}
+
+h2.text-center {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #00bcd4; /* Light cyan color for tech feel */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  background: #1c1c1c;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  border-radius: 15px;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  background-color: #00bcd4;
+  color: #fff;
+}
+
+.card-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 20px;
+}
+
+.card-text {
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.card-body {
+  padding: 25px;
+  text-align: center;
+}
+
+/* Footer */
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 2rem 0;
+  margin-top: 4rem;
+}
+
+footer p {
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  color: #00bcd4;
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #212121;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-brand {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #fff !important;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.navbar-nav .nav-link {
+  font-size: 1.2rem;
+  color: #fff !important;
+  padding: 0.75rem 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #00bcd4 !important;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
   .hero-section h1 {
-    font-size: 3rem;
-    font-weight: bold;
+    font-size: 2.8rem;
   }
-  
-  .hero-section p {
-    font-size: 1.5rem;
+
+  .hero-section .lead {
+    font-size: 1.2rem;
   }
-  
-  @media (max-width: 768px) {
-    .hero-section {
-      height: 60vh;
-    }
-  
-    .hero-section h1 {
-      font-size: 2rem;
-    }
-  
-    .hero-section p {
-      font-size: 1rem;
-    }
+
+  .btn {
+    font-size: 1.1rem;
   }
-  
+
+  .card-title {
+    font-size: 1.4rem;
+  }
+
+  .card-text {
+    font-size: 0.9rem;
+  }
+}

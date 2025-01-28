@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../context/UserContext'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './Login.css';
 
 function Login() {
     const { setUser } = useContext(UserContext); 
@@ -11,6 +12,7 @@ function Login() {
         password: ''
     });
     const [isHovered, setIsHovered] = useState(false);
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const location = useLocation(); // Get location state
 
@@ -25,8 +27,29 @@ function Login() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.email) {
+            newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = 'Email is not valid';
+        }
+
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0; // Return true if no errors
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            return; // Do not submit if there are validation errors
+        }
 
         try {
             const response = await fetch('http://localhost:5002/api/login', {
@@ -48,7 +71,7 @@ function Login() {
                 navigate('/dashboard', { state: { user: result.name } });
             } else {
                 const error = await response.json();
-                toast.error(error.error, { autoClose: 3000 }); // Use toast instead of alert
+                toast.error(error.error, { autoClose: 3000 });
             }
         } catch (error) {
             console.error("Network error:", error);
@@ -57,28 +80,35 @@ function Login() {
     };
 
     return (
-        <div style={styles.container}>
-            <h2 style={styles.title}>Login</h2>
-            <form onSubmit={handleSubmit} style={styles.form}>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    style={styles.input}
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    style={styles.input}
-                />
+        <div className="register-container">
+            <form onSubmit={handleSubmit} className="register-form">
+                <h2 className="form-title">Login</h2>
+                <div className="form-group">
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="form-control"
+                    />
+                    {errors.email && <div className="error-text">{errors.email}</div>}
+                </div>
+                <div className="form-group">
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="form-control"
+                    />
+                    {errors.password && <div className="error-text">{errors.password}</div>}
+                </div>
                 <button
                     type="submit"
-                    style={{ ...styles.button, backgroundColor: isHovered ? '#0056b3' : '#007BFF' }}
+                    className="neon-button"
+                    style={{ ...styles.button, backgroundColor: isHovered ? '#00cc70' : '#00ff84' }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
@@ -90,28 +120,6 @@ function Login() {
 }
 
 const styles = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#f9f9f9',
-    },
-    title: {
-        fontSize: '24px',
-        marginBottom: '20px',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '300px',
-    },
-    input: {
-        marginBottom: '15px',
-        padding: '10px',
-        fontSize: '16px',
-    },
     button: {
         padding: '10px',
         fontSize: '16px',
