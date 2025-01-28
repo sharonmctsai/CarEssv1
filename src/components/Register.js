@@ -13,6 +13,7 @@ function Register() {
 
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+    const [isHovered, setIsHovered] = useState(false);
 
     const validateForm = () => {
         let newErrors = {};
@@ -100,10 +101,31 @@ function Register() {
                 />
                 {errors.password && <p className="error-text">{errors.password}</p>}
 
-                <button type="submit" className="neon-button">Register</button>
+                <button
+                    type="submit"
+                    className="neon-button"
+                    style={{ ...styles.button, backgroundColor: isHovered ? '#00cc70' : '#4cc9f0' }}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    Register
+                </button>
+
             </form>
         </div>
     );
 }
+    const styles = {
+        button: {
+            padding: '10px',
+            fontSize: '16px',
+            backgroundColor: '#28a745',
+            color: '#fff',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease-in-out',
+        },
+    };
+
 
 export default Register;

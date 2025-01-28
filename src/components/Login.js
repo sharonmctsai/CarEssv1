@@ -108,7 +108,7 @@ function Login() {
                 <button
                     type="submit"
                     className="neon-button"
-                    style={{ ...styles.button, backgroundColor: isHovered ? '#00cc70' : '#00ff84' }}
+                    style={{ ...styles.button, backgroundColor: isHovered ? '#00cc70' : '#4cc9f0' }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
