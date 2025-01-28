@@ -1,27 +1,26 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Alert, Table, Spinner, Badge } from 'react-bootstrap';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaCalendarCheck, FaClock, FaHistory, FaTimesCircle, FaSignOutAlt } from 'react-icons/fa';
-import { UserContext } from '../context/UserContext'; // 引入 UserContext
+import { UserContext } from '../context/UserContext';
+import './UserDashboard.css';  // Import the new CSS file
 
 function UserDashboard() {
-    const { user,setUser } = useContext(UserContext); // 從全局上下文獲取用戶信息
+    const { user, setUser } = useContext(UserContext);
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-
     useEffect(() => {
         if (user?.email) {
-            // Fetch user's reservations
             fetch(`http://localhost:5002/api/reservations?email=${user.email}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setReservations(data);
                     setLoading(false);
                 })
-                .catch((err) => {
+                .catch(() => {
                     setError('Failed to load reservations');
                     setLoading(false);
                 });
@@ -31,10 +30,7 @@ function UserDashboard() {
     }, [user?.email]);
 
     const handleCancelReservation = (id) => {
-        // Handle reservation cancellation
-        fetch(`http://localhost:5002/api/cancel-reservation/${id}`, {
-            method: 'DELETE',
-        })
+        fetch(`http://localhost:5002/api/cancel-reservation/${id}`, { method: 'DELETE' })
             .then((res) => {
                 if (res.ok) {
                     setReservations(reservations.filter((r) => r.id !== id));
@@ -43,49 +39,53 @@ function UserDashboard() {
                     alert('Failed to cancel reservation.');
                 }
             })
-            .catch((err) => alert('Network error. Please try again.'));
+            .catch(() => alert('Network error. Please try again.'));
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('user'); // Clear user from localStorage
-        setUser(null); // Clear user context
-        navigate('/login'); // Redirect to login page
+        localStorage.removeItem('user');
+        setUser(null);
+        navigate('/login');
     };
 
     return (
-        <div className="user-dashboard" style={styles.background}>
-            <Container className="my-5">
+        <div className="dashboard-container">
+            <Container className="dashboard-content">
                 {/* Welcome Message */}
                 <Row className="mb-4">
                     <Col>
-                        <Card className="p-4 shadow-lg text-white" style={styles.cardPrimary}>
-                            <h2>Welcome back, {user?.name || 'Guest'}!</h2>
-                            <p>Your email: {user?.email || 'guest@example.com'}</p>
+                        <Card className="dashboard-card welcome-card">
+                            <Card.Body>
+                                <h2>Welcome back, {user?.name || 'Guest'}!</h2>
+                                <p>Your email: {user?.email || 'guest@example.com'}</p>
+                            </Card.Body>
                         </Card>
                     </Col>
                     <Col className="text-end">
-                        <Button variant="success" as={Link} to="/reservation" className="shadow">
-                            <FaCalendarCheck className="me-2" /> Make a New Reservation
+                        <Button as={Link} to="/reservation" className="neon-reserve me-3">
+                            <FaCalendarCheck className="me-2" /> Make a Reservation
                         </Button>
-                        <Button variant="danger" onClick={handleLogout} className="shadow">
+                        <Button onClick={handleLogout} className="neon-logout">
                             <FaSignOutAlt className="me-2" /> Logout
                         </Button>
+
+
                     </Col>
                 </Row>
 
                 {/* Upcoming Reservations */}
                 <Row className="mb-4">
                     <Col>
-                        <h3 className="text-primary">Your Upcoming Reservations</h3>
+                        <h3 className="text-light">Your Upcoming Reservations</h3>
                         {loading ? (
-                            <div className="d-flex justify-content-center my-3">
-                                <Spinner animation="border" />
+                            <div className="text-center my-3">
+                                <Spinner animation="border" variant="light" />
                             </div>
                         ) : error ? (
                             <Alert variant="danger">{error}</Alert>
                         ) : reservations.length > 0 ? (
-                            <Table striped bordered hover className="shadow-sm bg-white">
-                                <thead className="bg-dark text-white">
+                            <Table striped bordered hover className="shadow-sm bg-dark text-white">
+                                <thead className="table-dark">
                                     <tr>
                                         <th>#</th>
                                         <th>Service</th>
@@ -101,24 +101,17 @@ function UserDashboard() {
                                             <td>{index + 1}</td>
                                             <td>{res.service_type}</td>
                                             <td>{res.date}</td>
-                                            <td>
-                                                <FaClock className="me-1" />
-                                                {res.time}
-                                            </td>
+                                            <td><FaClock className="me-1" /> {res.time}</td>
                                             <td>
                                                 <Badge bg={res.status === 'Pending' ? 'warning' : 'success'}>
                                                     {res.status}
                                                 </Badge>
                                             </td>
                                             <td>
-                                                <Button
-                                                    variant="outline-danger"
-                                                    size="sm"
+                                                <Button variant="outline-danger" size="sm"
                                                     onClick={() => handleCancelReservation(res.id)}
-                                                    className="shadow-sm"
-                                                >
-                                                    <FaTimesCircle className="me-1" />
-                                                    Cancel
+                                                    className="shadow-sm">
+                                                    <FaTimesCircle className="me-1" /> Cancel
                                                 </Button>
                                             </td>
                                         </tr>
@@ -128,25 +121,22 @@ function UserDashboard() {
                         ) : (
                             <Alert variant="info">
                                 No upcoming reservations found.{" "}
-                                <Link to="/reservation" className="text-primary">
-                                    Make your first reservation now!
-                                </Link>
+                                <Link to="/reservation" className="text-primary">Make your first reservation now!</Link>
                             </Alert>
                         )}
                     </Col>
                 </Row>
 
-                {/* History Section */}
+                {/* Reservation History */}
                 <Row>
                     <Col>
-                        <h3 className="text-primary">Your Reservation History</h3>
-                        <Card className="shadow-lg p-4 bg-light">
+                        <h3 className="text-light">Your Reservation History</h3>
+                        <Card className="dashboard-card history-card">
                             <Card.Body className="d-flex justify-content-between align-items-center">
                                 <p className="mb-0">
-                                    <FaHistory className="me-2 text-secondary" />
-                                    See all your past reservations.
+                                    <FaHistory className="me-2 text-secondary" /> See all your past reservations.
                                 </p>
-                                <Button variant="outline-secondary" as={Link} to="/history" className="shadow-sm">
+                                <Button variant="outline-light" as={Link} to="/history" className="shadow-sm">
                                     View History
                                 </Button>
                             </Card.Body>
@@ -157,17 +147,5 @@ function UserDashboard() {
         </div>
     );
 }
-
-const styles = {
-    background: {
-        background: "linear-gradient(to bottom, #f9f9f9, #e8e8e8)",
-        minHeight: "100vh",
-        padding: "20px 0",
-    },
-    cardPrimary: {
-        background: "linear-gradient(to right, #4facfe, #00f2fe)",
-        border: "none",
-    },
-};
 
 export default UserDashboard;
