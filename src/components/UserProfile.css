@@ -1,0 +1,121 @@
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: white;
+}
+
+.profile-card {
+    background: linear-gradient(135deg, #0f3460, #16213e);
+    color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #00f2fe;
+    object-fit: cover;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-img:hover {
+    transform: scale(1.1);
+}
+
+.profile-card h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.profile-card p {
+    font-size: 1rem;
+    color: #b0bec5;
+    margin-bottom: 20px;
+}
+
+.profile-card .btn {
+    background: #00ffcc;
+    color: #000;
+    box-shadow: 0 0 8px #00ffcc, 0 0 20px #00ffcc;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.profile-card .btn:hover {
+    background: #00e6b3;
+    box-shadow: 0 0 12px #00e6b3, 0 0 30px #00e6b3;
+}
+
+.neon-save {
+    background: #00ffcc;
+    color: #000;
+    box-shadow: 0 0 8px #00ffcc, 0 0 20px #00ffcc;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.neon-save:hover {
+    background: #00e6b3;
+    box-shadow: 0 0 12px #00e6b3, 0 0 30px #00e6b3;
+}
+
+.neon-edit {
+    background: #007bff;
+    color: #fff;
+    box-shadow: 0 0 6px #007bff, 0 0 15px #007bff;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.neon-edit:hover {
+    background: #0056b3;
+    box-shadow: 0 0 8px #0056b3, 0 0 25px #0056b3;
+}
+
+.neon-back {
+    background: #ff073a;
+    color: #fff;
+    box-shadow: 0 0 6px #ff073a, 0 0 15px #ff073a;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.neon-back:hover {
+    background: #ff4d6d;
+    box-shadow: 0 0 8px #ff4d6d, 0 0 25px #ff4d6d;
+}

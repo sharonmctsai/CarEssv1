@@ -1,0 +1,88 @@
+/* Background: Futuristic Dark Theme */
+.reservation-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #1a1a2e, #16213e); /* Dark blue gradient */
+}
+
+/* Centered Glassmorphism Form */
+.reservation-form {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 10px rgba(76, 201, 240, 0.2); /* Light blue shadow */
+    text-align: center;
+    width: 350px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Pop-out effect on hover */
+.reservation-form:hover {
+    transform: scale(1.05); /* Slightly enlarge */
+    box-shadow: 0px 8px 20px rgba(76, 201, 240, 0.5); /* Glowing effect */
+}
+
+/* Title - Smaller, No Neon Effect, White Color */
+.reservation-form h2 {
+    color: white;  /* Set title color to white */
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 24px;  /* Smaller font size */
+    text-transform: uppercase;
+}
+
+/* Service Type Label */
+.reservation-form .form-group label {
+    color: white;  /* Set the label text color to white */
+}
+
+/* Input Fields - Neon Light Blue Glow */
+.form-control {
+    background: transparent;
+    border: 2px solid #4cc9f0; /* Light Blue */
+    color: white; /* Set input text color to white */
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6); /* Lighter placeholder text */
+}
+
+.form-control:focus {
+    border-color: #4cc9f0;
+    box-shadow: 0 0 10px #4cc9f0;
+    background: transparent;
+}
+
+/* Neon Button - Light Blue */
+.neon-button {
+    background-color: #4cc9f0;
+    color: white;  /* Button text color */
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 8px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.neon-button:hover {
+    background-color: #3da9d5;
+    box-shadow: 0 0 15px #4cc9f0;
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+    .reservation-form {
+        width: 90%;
+    }
+}

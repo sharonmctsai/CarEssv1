@@ -5,6 +5,8 @@ import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
 import UserDashboard from './components/UserDashboard';
+import UserProfile from "./components/UserProfile"; 
+
 import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
 import Reservation from './components/Reservation';
@@ -22,6 +24,8 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route element={<ProtectedRoute />}>
                       <Route path="/dashboard" element={<UserDashboard />} />
+                      <Route path="/profile" element={<UserProfile />} /> 
+
                       <Route path="/admin-dashboard" element={<AdminDashboard />} />
                       <Route path="/admin-login" element={<AdminLogin />} />
                       <Route path="/reservation" element={<Reservation />} />

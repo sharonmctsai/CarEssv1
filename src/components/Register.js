@@ -10,10 +10,10 @@ function Register() {
         email: '',
         password: ''
     });
+    const [isHovered, setIsHovered] = useState(false);
 
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    const [isHovered, setIsHovered] = useState(false);
 
     const validateForm = () => {
         let newErrors = {};
@@ -48,7 +48,7 @@ function Register() {
         }
 
         try {
-            const response = await fetch('http://localhost:5002/api/register', {
+            const response = await fetch('http://localhost:5001/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -111,10 +111,11 @@ function Register() {
                     Register
                 </button>
 
+
             </form>
         </div>
     );
-}
+    }
     const styles = {
         button: {
             padding: '10px',

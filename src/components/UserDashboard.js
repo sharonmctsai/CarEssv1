@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Alert, Table, Spinner, Badge } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaCalendarCheck, FaClock, FaHistory, FaTimesCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaCalendarCheck, FaClock, FaHistory, FaTimesCircle, FaSignOutAlt,FaUserEdit } from 'react-icons/fa';
 import { UserContext } from '../context/UserContext';
 import './UserDashboard.css';  // Import the new CSS file
 
@@ -68,7 +68,10 @@ function UserDashboard() {
                         <Button onClick={handleLogout} className="neon-logout">
                             <FaSignOutAlt className="me-2" /> Logout
                         </Button>
-
+                        {/* Profile Button in Dashboard */}
+                <Button as={Link} to="/profile" className="neon-profile me-3">
+                    <FaUserEdit className="me-2" /> Profile
+                </Button>
 
                     </Col>
                 </Row>
