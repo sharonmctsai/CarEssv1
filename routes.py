@@ -74,6 +74,33 @@ def get_reservations():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
+@auth.route('/api/history', methods=['GET'])
+def get_reservation_history():
+    email = request.args.get('email')  # Get the email from query params
+
+    if not email:
+        return jsonify({"error": "Email parameter is required"}), 400
+
+    # Fetch past reservations (assuming "Completed" or past dates indicate history)
+    past_reservations = Reservation.query.filter(
+        (Reservation.user_email == email) &
+        ((Reservation.status == "Completed") | (Reservation.date < datetime.today().date()))
+    ).all()
+
+    # Convert reservations to JSON response
+    history_list = [
+        {
+            "id": res.id,
+            "service_type": res.service_type,
+            "date": res.date.strftime("%Y-%m-%d"),
+            "time": res.time.strftime("%H:%M"),
+            "status": res.status
+        }
+        for res in past_reservations
+    ]
+
+    return jsonify(history_list), 200
+
 
 @auth.route('/api/available-times', methods=['GET'])
 def get_available_times():

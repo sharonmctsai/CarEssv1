@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Alert, Table, Spinner, Badge } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaCalendarCheck, FaClock, FaHistory, FaTimesCircle, FaSignOutAlt,FaUserEdit } from 'react-icons/fa';
+import { FaCalendarCheck, FaClock, FaHistory, FaTimesCircle, FaSignOutAlt,FaUserEdit, FaArrowLeft} from 'react-icons/fa';
 import { UserContext } from '../context/UserContext';
 import './UserDashboard.css';  // Import the new CSS file
 
@@ -11,6 +11,7 @@ function UserDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const [history, setHistory] = useState([]);
 
     useEffect(() => {
         if (user?.email) {
@@ -28,6 +29,19 @@ function UserDashboard() {
             setLoading(false);
         }
     }, [user?.email]);
+
+    useEffect(() => {
+        if (user?.email) {
+            fetch(`http://localhost:5002/api/history?email=${user.email}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log("History Data:", data);  // Debugging log
+                    setHistory(data);
+                })
+                .catch(() => console.error("Failed to load reservation history"));
+        }
+    }, [user?.email]);
+    
 
     const handleCancelReservation = (id) => {
         fetch(`http://localhost:5002/api/cancel-reservation/${id}`, { method: 'DELETE' })
@@ -62,16 +76,22 @@ function UserDashboard() {
                         </Card>
                     </Col>
                     <Col className="text-end">
-                        <Button as={Link} to="/reservation" className="neon-reserve me-3">
+                        <Button as={Link} to="/reservation" className="neon-reserve">
                             <FaCalendarCheck className="me-2" /> Make a Reservation
                         </Button>
-                        <Button onClick={handleLogout} className="neon-logout">
-                            <FaSignOutAlt className="me-2" /> Logout
-                        </Button>
+                       
                         {/* Profile Button in Dashboard */}
-                <Button as={Link} to="/profile" className="neon-profile me-3">
+                <Button as={Link} to="/profile" className="neon-profile ">
                     <FaUserEdit className="me-2" /> Profile
                 </Button>
+
+                <Button onClick={handleLogout} className="neon-logout">
+                            <FaSignOutAlt className="me-2" /> Logout
+                        </Button>
+                  {/* Back to Dashboard Button */}
+                  <Button className="btn neon-back mt-3" onClick={() => navigate("/")}>
+                        <FaArrowLeft className="me-2" /> Homepage
+                    </Button>
 
                     </Col>
                 </Row>
@@ -129,23 +149,43 @@ function UserDashboard() {
                         )}
                     </Col>
                 </Row>
+            {/* Reservation History */}
+            <Row className="mb-4">
+                <Col>
+                    <h3 className="text-light">Your Reservation History</h3>
+                    {history.length > 0 ? (
+                        <Table striped bordered hover className="shadow-sm bg-dark text-white">
+                            <thead className="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Service</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {history.map((res, index) => (
+                                    <tr key={res.id}>
+                                        <td>{index + 1}</td>
+                                        <td>{res.service_type}</td>
+                                        <td>{res.date}</td>
+                                        <td><FaClock className="me-1" /> {res.time}</td>
+                                        <td>
+                                            <Badge bg="secondary">{res.status}</Badge>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    ) : (
+                        <Alert variant="info">
+                            No past reservations found.
+                        </Alert>
+                    )}
+                </Col>
+            </Row>
 
-                {/* Reservation History */}
-                <Row>
-                    <Col>
-                        <h3 className="text-light">Your Reservation History</h3>
-                        <Card className="dashboard-card history-card">
-                            <Card.Body className="d-flex justify-content-between align-items-center">
-                                <p className="mb-0">
-                                    <FaHistory className="me-2 text-secondary" /> See all your past reservations.
-                                </p>
-                                <Button variant="outline-light" as={Link} to="/history" className="shadow-sm">
-                                    View History
-                                </Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
             </Container>
         </div>
     );
