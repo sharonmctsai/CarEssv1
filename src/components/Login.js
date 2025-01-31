@@ -79,6 +79,11 @@ function Login() {
         }
     };
 
+         // Cancel button handler (navigates to home page)
+         const handleCancel = () => {
+            navigate('/');
+        };
+
     return (
         <div className="register-container">
             <form onSubmit={handleSubmit} className="register-form">
@@ -113,6 +118,15 @@ function Login() {
                     onMouseLeave={() => setIsHovered(false)}
                 >
                     Login
+                </button>
+
+
+                <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={handleCancel}
+                >
+                    Cancel
                 </button>
             </form>
         </div>

@@ -9,20 +9,20 @@
 
 /* Centered Glassmorphism Form */
 .register-form {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 30px;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0px 4px 10px rgba(76, 201, 240, 0.2); /* Light blue shadow */
+    background: rgba(255, 255, 255, 0.15); /* Increased opacity for better visibility */
+    padding: 40px; /* Increased padding */
+    border-radius: 12px; /* Slightly bigger border radius */
+    backdrop-filter: blur(12px); /* Increased blur effect */
+    box-shadow: 0px 5px 20px rgba(76, 201, 240, 0.25); /* Light blue shadow with more spread */
     text-align: center;
-    width: 350px;
+    width: 450px; /* Increased width */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 /* Pop-out effect on hover */
 .register-form:hover {
     transform: scale(1.05); /* Slightly enlarge */
-    box-shadow: 0px 8px 20px rgba(76, 201, 240, 0.5); /* Glowing effect */
+    box-shadow: 0px 8px 25px rgba(76, 201, 240, 0.5); /* Glowing effect */
 }
 
 /* Title */
@@ -31,6 +31,7 @@
     margin-bottom: 20px;
     font-weight: bold;
     letter-spacing: 1px;
+    font-size: 24px; /* Increase title font size */
 }
 
 /* Input Fields - Neon Light Blue Glow */
@@ -38,9 +39,9 @@
     background: transparent;
     border: 2px solid #4cc9f0; /* Light Blue */
     color: #fff;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 5px;
+    padding: 15px; /* Increased padding */
+    font-size: 18px; /* Larger font size */
+    border-radius: 8px; /* Bigger border radius */
     transition: 0.3s ease-in-out;
 }
 
@@ -50,7 +51,7 @@
 
 .form-control:focus {
     border-color: #4cc9f0;
-    box-shadow: 0 0 10px #4cc9f0;
+    box-shadow: 0 0 12px #4cc9f0; /* Slightly bigger glow */
     background: transparent;
 }
 
@@ -58,19 +59,19 @@
 .neon-button {
     background-color: #4cc9f0;
     color: white;
-    padding: 12px;
-    font-size: 16px;
+    padding: 15px; /* Increased padding */
+    font-size: 18px; /* Larger button font */
     border: none;
     cursor: pointer;
     transition: 0.3s ease-in-out;
-    border-radius: 8px;
+    border-radius: 10px; /* Larger border radius */
     width: 100%;
-    margin-top: 15px;
+    margin-top: 20px; /* Increased margin */
 }
 
 .neon-button:hover {
     background-color: #3da9d5;
-    box-shadow: 0 0 15px #4cc9f0;
+    box-shadow: 0 0 20px #4cc9f0; /* Bigger glow effect */
 }
 
 /* Responsive Design */
@@ -79,9 +80,28 @@
         width: 90%;
     }
 }
+
 .error-text {
     color: #ff4c4c; /* Red error text */
     font-size: 14px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+/* Cancel Button Style */
+.cancel-button {
+    background-color: #ff4c4c; /* Red color */
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 8px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.cancel-button:hover {
+    background-color: #e03e3e;
 }

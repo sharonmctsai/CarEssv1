@@ -27,8 +27,8 @@ function Register() {
         }
         if (!formData.password) {
             newErrors.password = "Password is required.";
-        } else if (formData.password.length < 6) {
-            newErrors.password = "Password must be at least 6 characters.";
+        } else if (formData.password.length < 4) {
+            newErrors.password = "Password must be at least 4 characters.";
         }
 
         setErrors(newErrors);
@@ -67,6 +67,11 @@ function Register() {
         }
     };
 
+       // Cancel button handler (navigates to home page)
+       const handleCancel = () => {
+        navigate('/');
+    };
+
     return (
         <div className="register-container">
             <form className="register-form" onSubmit={handleSubmit}>
@@ -94,7 +99,7 @@ function Register() {
                 <input
                     type="password"
                     name="password"
-                    placeholder="Password (min 6 characters)"
+                    placeholder="Password (min 4 characters)"
                     value={formData.password}
                     onChange={handleChange}
                     className="form-control"
@@ -110,7 +115,13 @@ function Register() {
                 >
                     Register
                 </button>
-
+                <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={handleCancel}
+                >
+                    Cancel
+                </button>
 
             </form>
         </div>
