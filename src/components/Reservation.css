@@ -86,3 +86,6 @@
         width: 90%;
     }
 }
+.cancel-button:hover {
+    background-color: #e03e3e;
+}

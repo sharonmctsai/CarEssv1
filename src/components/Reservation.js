@@ -85,10 +85,18 @@ function Reservation() {
                             disabled={!formData.service_type}>
                             Next
                         </Button>
+
+                        <Button 
+                            variant="secondary" 
+                            onClick={() => navigate('/dashboard')} 
+                            className="mt-3 cancel-button">
+                            Cancel
+                        </Button>
                     </Form>
                 )}
 
-                {step === 2 && (
+                  {/* Step 2: Select Date */}
+                  {step === 2 && (
                     <Form>
                         <Form.Group>
                             <Form.Label>Date</Form.Label>
@@ -108,6 +116,13 @@ function Reservation() {
                             disabled={!formData.date}>
                             Next
                         </Button>
+                        <Button 
+                            variant="secondary" 
+                            onClick={() => setStep(1)} 
+                            className="mt-3 neon-button">
+                            Go Back
+                        </Button>
+                       
                     </Form>
                 )}
 
@@ -133,8 +148,17 @@ function Reservation() {
                                 <Spinner animation="border" className="neon-spinner" />
                             )}
                         </Form.Group>
+
+
                         <Button variant="primary" type="submit" className="mt-3 neon-button" disabled={!formData.time}>
                             {loading ? "Submitting..." : "Submit Reservation"}
+                        </Button>
+
+                        <Button 
+                            variant="secondary" 
+                            onClick={() => setStep(2)} 
+                            className="mt-3 neon-button">
+                            Go Back
                         </Button>
                     </Form>
                 )}
