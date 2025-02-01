@@ -90,3 +90,16 @@
 .cancel-button:hover {
     background-color: #e03e3e;
 }
+
+.password-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #00bcd4;
+}
+
+.password-icon:hover {
+    color: #00cc70;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Icons for visibility toggle
 import 'react-toastify/dist/ReactToastify.css';
 import './Register.css'; // Import custom styles
 
@@ -10,8 +11,8 @@ function Register() {
         email: '',
         password: ''
     });
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for password visibility
     const [isHovered, setIsHovered] = useState(false);
-
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -48,7 +49,7 @@ function Register() {
         }
 
         try {
-            const response = await fetch('http://localhost:5001/api/register', {
+            const response = await fetch('http://localhost:5002/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -67,19 +68,24 @@ function Register() {
         }
     };
 
-       // Cancel button handler (navigates to home page)
-       const handleCancel = () => {
+    // Cancel button handler (navigates to home page)
+    const handleCancel = () => {
         navigate('/');
+    };
+
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible); // Toggle visibility state
     };
 
     return (
         <div className="register-container">
             <form className="register-form" onSubmit={handleSubmit}>
                 <h2>Register</h2>
+
                 <input
                     type="text"
                     name="name"
-                    placeholder="Full Name"
+                    placeholder="UserName"
                     value={formData.name}
                     onChange={handleChange}
                     className="form-control"
@@ -96,14 +102,23 @@ function Register() {
                 />
                 {errors.email && <p className="error-text">{errors.email}</p>}
 
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password (min 4 characters)"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="form-control"
-                />
+                <div className="form-group position-relative">
+                    <input
+                        type={isPasswordVisible ? 'text' : 'password'} // Toggle password visibility
+                        name="password"
+                        placeholder="Enter your Password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="form-control"
+                    />
+                    <div
+                        className="password-icon"
+                        onClick={() => setIsPasswordVisible(!isPasswordVisible)} // Toggle visibility
+                    >
+                        {isPasswordVisible ? <FaEye /> : <FaEyeSlash />} {/* Toggle icon */}
+                    </div>
+                    {errors.password && <div className="error-text">{errors.password}</div>}
+                </div>
                 {errors.password && <p className="error-text">{errors.password}</p>}
 
                 <button
@@ -126,18 +141,18 @@ function Register() {
             </form>
         </div>
     );
-    }
-    const styles = {
-        button: {
-            padding: '10px',
-            fontSize: '16px',
-            backgroundColor: '#28a745',
-            color: '#fff',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease-in-out',
-        },
-    };
+}
 
+const styles = {
+    button: {
+        padding: '10px',
+        fontSize: '16px',
+        backgroundColor: '#28a745',
+        color: '#fff',
+        border: 'none',
+        cursor: 'pointer',
+        transition: 'background-color 0.3s ease-in-out',
+    },
+};
 
 export default Register;
