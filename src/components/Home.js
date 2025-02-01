@@ -3,11 +3,16 @@ import { Link, useLocation } from 'react-router-dom';
 import { Navbar, Nav, Container, Button, Card, Row, Col } from 'react-bootstrap';
 import { FaCarSide, FaTools, FaBell } from 'react-icons/fa'; // using React Icons
 import './Home.css'; // create css individually for design
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Home() {
   const location = useLocation();
-  const user = location.state?.user || 'Guest'; // 接收來自 login 的用戶資訊
+  // Retrieve and parse stored user data
+  const storedUser = JSON.parse(localStorage.getItem("user")) || {}; 
+  const username = storedUser.name || "Guest"; // Extract only the name
 
+  console.log("User:", username); // Debugging
+  
   return (
     <>
       {/* Navigation */}
@@ -17,14 +22,17 @@ function Home() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              {user !== 'Guest' ? (
+              {username !== 'Guest' ? (
                 <>
                 <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
                 <Nav.Link as={Link} to="/reservation">Reservation</Nav.Link>
-                <Nav.Link disabled style={{ color: 'white' }}>Hello, {user}</Nav.Link>
+                <Nav.Link as={Link} to="/" onClick={() => { localStorage.removeItem("user"); window.location.reload(); }}>
+              Logout
+                 </Nav.Link>
+                 <Nav.Link disabled style={{ color: 'white' }}>Hello, {username}</Nav.Link>
+
+
                 </>
-                
-                
               ) : (
                 <>
                   <Nav.Link as={Link} to="/register">Register</Nav.Link>
@@ -43,7 +51,7 @@ function Home() {
           <h1 className="display-4">Welcome to CarEss</h1>
           <p className="lead">"Booking Made Easy, Service Made Right."</p>
           <div className="mt-4">
-            {user === 'Guest' ? (
+            {username === 'Guest' ? (
               <>
                 <Button variant="primary" size="lg" as={Link} to="/register" className="mx-2">
                   Register
@@ -53,7 +61,7 @@ function Home() {
                 </Button>
               </>
             ) : (
-              <p className="lead">Welcome back, {user}!</p>
+              <p className="lead">Welcome back, {username}!</p>
             )}
           </div>
         </Container>
@@ -106,5 +114,6 @@ function Home() {
     </>
   );
 }
+
 
 export default Home;
