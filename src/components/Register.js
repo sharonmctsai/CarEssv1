@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Icons for visibility toggle
 import 'react-toastify/dist/ReactToastify.css';
 import './Register.css'; // Import custom styles
+import { FaUser,FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -14,6 +14,8 @@ function Register() {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for password visibility
     const [isHovered, setIsHovered] = useState(false);
     const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+
     const navigate = useNavigate();
 
     const validateForm = () => {
@@ -39,6 +41,10 @@ function Register() {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setErrors({ ...errors, [e.target.name]: '' }); // Clear errors on input change
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword((prev) => !prev);
     };
 
     const handleSubmit = async (e) => {
@@ -73,15 +79,16 @@ function Register() {
         navigate('/');
     };
 
-    const togglePasswordVisibility = () => {
-        setIsPasswordVisible(!isPasswordVisible); // Toggle visibility state
-    };
+
 
     return (
         <div className="register-container">
             <form className="register-form" onSubmit={handleSubmit}>
                 <h2>Register</h2>
 
+                    {/* Email Field with Icon */}
+                    <div className="input-group">
+                    <FaUser className="icon" />
                 <input
                     type="text"
                     name="name"
@@ -90,8 +97,11 @@ function Register() {
                     onChange={handleChange}
                     className="form-control"
                 />
+                </div>
                 {errors.name && <p className="error-text">{errors.name}</p>}
 
+                  <div className="input-group">
+                    <FaEnvelope className="icon" />
                 <input
                     type="email"
                     name="email"
@@ -100,8 +110,12 @@ function Register() {
                     onChange={handleChange}
                     className="form-control"
                 />
+                </div>
                 {errors.email && <p className="error-text">{errors.email}</p>}
 
+                 {/* Password Field with Eye Toggle */}
+                 <div className="input-group">
+                    <FaLock className="icon" />
                 <div className="form-group position-relative">
                     <input
                         type={isPasswordVisible ? 'text' : 'password'} // Toggle password visibility
@@ -111,6 +125,7 @@ function Register() {
                         onChange={handleChange}
                         className="form-control"
                     />
+                    </div>
                     <div
                         className="password-icon"
                         onClick={() => setIsPasswordVisible(!isPasswordVisible)} // Toggle visibility

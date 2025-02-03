@@ -3,8 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { UserContext } from '../context/UserContext'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Importing eye icons for toggle
 import './Login.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
 
 function Login() {
     const { setUser } = useContext(UserContext); 
@@ -13,8 +14,9 @@ function Login() {
         password: ''
     });
     const [isHovered, setIsHovered] = useState(false);
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for password visibility
     const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+
     const navigate = useNavigate();
     const location = useLocation(); // Get location state
 
@@ -27,6 +29,11 @@ function Login() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+
+    const togglePasswordVisibility = () => {
+        setShowPassword((prev) => !prev);
     };
 
     const validateForm = () => {
@@ -81,42 +88,43 @@ function Login() {
         }
     };
 
-    // Cancel button handler (navigates to home page)
-    const handleCancel = () => {
-        navigate('/');
-    };
+        // Cancel button handler (navigates to home page)
+        const handleCancel = () => {
+            navigate('/');
+        };
+    
 
     return (
         <div className="login-container">
             <form onSubmit={handleSubmit} className="login-form">
                 <h2 className="form-title">Login</h2>
-                <div className="form-group">
+                {/* Email Field with Icon */}
+                <div className="input-group">
+                    <FaEnvelope className="icon" />
                     <input
                         type="email"
                         name="email"
-                        placeholder="Enter your Email"
+                        placeholder="Email"
                         value={formData.email}
                         onChange={handleChange}
                         className="form-control"
                     />
                     {errors.email && <div className="error-text">{errors.email}</div>}
                 </div>
-                <div className="form-group position-relative">
+                {/* Password Field with Eye Toggle */}
+                <div className="input-group">
+                    <FaLock className="icon" />
                     <input
-                        type={isPasswordVisible ? 'text' : 'password'} // Toggle password visibility
+                        type={showPassword ? "text" : "password"}
                         name="password"
-                        placeholder="Enter your Password"
+                        placeholder="Password"
                         value={formData.password}
                         onChange={handleChange}
                         className="form-control"
                     />
-                    <div
-                        className="password-icon"
-                        onClick={() => setIsPasswordVisible(!isPasswordVisible)} // Toggle visibility
-                    >
-                        {isPasswordVisible ? <FaEye /> : <FaEyeSlash />} {/* Toggle icon */}
-                    </div>
-                    {errors.password && <div className="error-text">{errors.password}</div>}
+                    <span className="eye-icon" onClick={togglePasswordVisibility}>
+                        {showPassword ? <FaEye /> : <FaEyeSlash />}
+                    </span>
                 </div>
                 <button
                     type="submit"

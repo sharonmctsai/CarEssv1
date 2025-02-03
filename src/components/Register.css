@@ -38,7 +38,7 @@
 .form-control {
     background: transparent;
     border: 2px solid #4cc9f0; /* Light Blue */
-    color: #fff;
+    color: #0e0d0d;
     padding: 15px; /* Increased padding */
     font-size: 18px; /* Larger font size */
     border-radius: 8px; /* Bigger border radius */
@@ -46,13 +46,15 @@
 }
 
 .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(0, 0, 0, 0.6); /* Adjust placeholder color for better visibility */
 }
 
 .form-control:focus {
     border-color: #4cc9f0;
     box-shadow: 0 0 12px #4cc9f0; /* Slightly bigger glow */
     background: transparent;
+    color: black; /* Ensure text remains black on focus */
+
 }
 
 /* Neon Button - Light Blue */
@@ -105,15 +107,33 @@
 .cancel-button:hover {
     background-color: #e03e3e;
 }
-.password-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #00bcd4;
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
-.password-icon:hover {
-    color: #00cc70;
+.input-group .icon {
+    margin-right: 10px;
+    color: #555;
 }
+
+.input-group input {
+    color: black; /* Set text color to black */
+
+    border: none;
+    outline: none;
+    flex: 1;
+    background: transparent;
+    font-size: 16px;
+}
+
+.input-group input::placeholder {
+    color: rgba(0, 0, 0, 0.7); /* Dark placeholder text */
+}
+
