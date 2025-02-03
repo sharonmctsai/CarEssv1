@@ -3,6 +3,8 @@ import { Container, Form, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import './Reservation.css'; // Import the updated CSS file for custom styles
+import CalendarComponent from '../components/CalendarComponent';
+import TimeDropdownComponent from '../components/TimeDropdownComponent';
 
 function Reservation() {
     const { user } = useContext(UserContext);
@@ -98,17 +100,10 @@ function Reservation() {
                   {/* Step 2: Select Date */}
                   {step === 2 && (
                     <Form>
-                        <Form.Group>
-                            <Form.Label>Date</Form.Label>
-                            <Form.Control 
-                                type="date" 
-                                name="date" 
-                                value={formData.date} 
-                                onChange={handleChange} 
-                                required 
-                                className="form-control"
-                            />
-                        </Form.Group>
+                       <Form.Group>
+                        <CalendarComponent selectedDate={formData.date} setSelectedDate={(date) => setFormData({ ...formData, date })} />
+                    </Form.Group>
+
                         <Button 
                             variant="primary" 
                             onClick={() => setStep(3)} 
@@ -131,19 +126,14 @@ function Reservation() {
                         <Form.Group>
                             <Form.Label>Time</Form.Label>
                             {availableTimes.length > 0 ? (
-                                <Form.Control 
-                                    as="select" 
-                                    name="time" 
-                                    value={formData.time} 
-                                    onChange={handleChange} 
-                                    required
-                                    className="form-control"
-                                >
-                                    <option value="">Select a time</option>
-                                    {availableTimes.map(time => (
-                                        <option key={time} value={time}>{time}</option>
-                                    ))}
-                                </Form.Control>
+                             <Form.Group>
+                             <TimeDropdownComponent
+                                 selectedTime={formData.time}
+                                 setSelectedTime={(time) => setFormData({ ...formData, time })}
+                                 availableTimes={availableTimes}
+                             />
+                         </Form.Group>
+                         
                             ) : (
                                 <Spinner animation="border" className="neon-spinner" />
                             )}
