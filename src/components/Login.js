@@ -6,6 +6,41 @@ import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+
+const GOOGLE_CLIENT_ID = "563323757566-h08eu7gboig2s82slulk703lnhdq226s.apps.googleusercontent.com"; // Replace with actual client ID
+
+const handleGoogleLoginSuccess = async (response) => {
+    const decodedToken = jwtDecode(response.credential);
+
+    const googleUser = {
+        token: response.credential,
+    };
+
+    try {
+        const res = await fetch("http://localhost:5002/api/auth/google", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(googleUser),
+        });
+
+        if (res.ok) {
+            const userData = await res.json();
+            localStorage.setItem("user", JSON.stringify(userData));
+            console.log("Google login successful:", userData);
+        } else {
+            console.error("Google login failed");
+        }
+    } catch (error) {
+        console.error("Error during Google login:", error);
+    }
+};
+
+<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <GoogleLogin onSuccess={handleGoogleLoginSuccess} onError={() => console.log("Google login failed")} />
+</GoogleOAuthProvider>;
+
 
 function Login() {
     const { setUser } = useContext(UserContext); 
@@ -88,6 +123,41 @@ function Login() {
         }
     };
 
+    const handleGoogleLoginSuccess = async (response) => {
+        const token = response.credential;  // Google token
+    
+        try {
+            const res = await fetch("http://localhost:5002/api/auth/google", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token }),  // Send token to backend
+            });
+    
+            if (res.ok) {
+                const userData = await res.json();
+                console.log("Google login successful:", userData);
+                
+                // Save user details in localStorage
+                localStorage.setItem("user", JSON.stringify(userData));
+                
+                // Update User Context
+                setUser(userData);
+    
+                // Navigate to Dashboard
+                navigate('/dashboard', { state: { user: userData.name } });
+    
+            } else {
+                console.error("Google login failed");
+                toast.error("Google login failed. Try again.");
+            }
+        } catch (error) {
+            console.error("Error during Google login:", error);
+            toast.error("Network error. Please try again.");
+        }
+    };
+
+    
+
         // Cancel button handler (navigates to home page)
         const handleCancel = () => {
             navigate('/');
@@ -122,6 +192,8 @@ function Login() {
                         onChange={handleChange}
                         className="form-control"
                     />
+                   {errors.email && <div className="error-text">{errors.email}</div>}
+
                     <span className="eye-icon" onClick={togglePasswordVisibility}>
                         {showPassword ? <FaEye /> : <FaEyeSlash />}
                     </span>
@@ -133,8 +205,19 @@ function Login() {
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
-                    Login
+                    Login with email 
                 </button>
+
+                <div>
+                    <br></br>
+                <p>OR</p>
+                <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+                    <GoogleLogin
+                        onSuccess={handleGoogleLoginSuccess}
+                        onError={() => console.log("Google login failed")}
+                    />
+                </GoogleOAuthProvider>
+            </div>
 
                 <button
                     type="button"

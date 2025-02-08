@@ -1,10 +1,73 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, Flask, request, jsonify, session
 from models import db, User, Reservation
 from datetime import datetime
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token
 
-# setup Blueprint
+app = Flask(__name__)  # initialize the Flask app
+
+# Setup database, configurations, etc.
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'  # Example URI
+db.init_app(app)
+
+# 創建 Blueprint
 auth = Blueprint('auth', __name__)
 
+# Replace with your Google OAuth client ID
+GOOGLE_CLIENT_ID = "563323757566-h08eu7gboig2s82slulk703lnhdq226s.apps.googleusercontent.com"
+
+@auth.route("/api/auth/google", methods=["POST"])
+def google_login():
+    try:
+        data = request.get_json()
+        token = data.get("token")
+
+        if not token:
+            return jsonify({"error": "Token is required"}), 400
+
+        # Verify the token with Google's servers
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), GOOGLE_CLIENT_ID)
+
+        # Extract user information
+        email = idinfo["email"]
+        name = idinfo.get("name", "Google User")
+
+        # Check if user exists, otherwise create a new user
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            user = User(name=name, email=email)
+            db.session.add(user)
+            db.session.commit()
+
+
+        return jsonify({
+            "message": "Google login successful",
+            "name": user.name,
+            "email": user.email
+        }), 200
+    
+    
+
+    except Exception as e:
+        print(f"Google OAuth error: {e}")
+        return jsonify({"error": "Invalid token or Google authentication failed"}), 400
+    
+# Define the cancel reservation route
+@auth.route("/api/cancel-reservation/<int:id>", methods=["DELETE", "OPTIONS"])
+def cancel_reservation(id):
+    if request.method == "OPTIONS":
+        return "", 200  # Handle OPTIONS request for preflight
+
+  # Cancel reservation logic (delete from DB)
+    reservation = Reservation.query.filter_by(id=id).first()
+
+    if reservation:
+        db.session.delete(reservation)  # Delete the reservation
+        db.session.commit()  # Commit the changes to the database
+        return jsonify({"message": "Reservation cancelled successfully"}), 200
+    else:
+        return jsonify({"error": "Reservation not found"}), 404
 
 @auth.route('/api/register', methods=['POST'])
 def register():
@@ -51,28 +114,29 @@ def login():
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
-
-
+    
 @auth.route('/api/reservations', methods=['GET'])
 def get_reservations():
-    try:
-        email = request.args.get('email')
+    email = request.args.get('email')  # Get the email from query params
+    
+    if not email:
+        return jsonify({"error": "Email parameter is required"}), 400
+    
+    reservations = Reservation.query.filter_by(user_email=email).all()
 
-        if not email:
-            return jsonify({"error": "Email parameter is required"}), 400  # Ensure email is provided
+    # Convert the reservations to a list of dictionaries
+    reservations_list = [
+        {
+            "id": res.id,
+            "service_type": res.service_type,
+            "date": res.date.strftime("%Y-%m-%d"),
+            "time": res.time.strftime("%H:%M"),
+            "status": res.status
+        }
+        for res in reservations
+    ]
 
-        reservations = Reservation.query.filter_by(user_email=email).all()
-
-        return jsonify([{
-            "id": r.id,
-            "service_type": r.service_type,
-            "date": r.date.strftime("%Y-%m-%d"),
-            "time": r.time.strftime("%H:%M"),
-            "status": r.status
-        } for r in reservations]), 200
-    except Exception as e:
-        print(f"Error occurred: {e}")
-        return jsonify({"error": "Internal Server Error"}), 500
+    return jsonify(reservations_list), 200
 
 @auth.route('/api/history', methods=['GET'])
 def get_reservation_history():
@@ -114,7 +178,7 @@ def get_available_times():
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
-    
+
 @auth.route('/api/reserve', methods=['POST', 'OPTIONS'])
 def reserve():
     if request.method == 'OPTIONS':
@@ -139,7 +203,7 @@ def reserve():
             date=datetime.strptime(date, "%Y-%m-%d").date(),
             time=datetime.strptime(time, "%H:%M").time(),
             user_email=user_email,
-            status="Pending",  #  can adjust the default status
+            status="Pending",  # You can adjust the default status as per your logic
         )
 
         # Add the reservation to the database
@@ -162,22 +226,11 @@ def reserve():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
+@auth.route("/dashboard")
+def dashboard():
+    print(f"Session data in /dashboard: {session}")  # Debug session storage
+    if 'user_email' not in session:
+        print("User is not logged in, redirecting to login.")
+        return jsonify({"error": "Not logged in", "redirect": "/api/login"}), 401
 
-# Define the cancel reservation route
-@auth.route("/api/cancel-reservation/<int:id>", methods=["DELETE", "OPTIONS"])
-def cancel_reservation(id):
-    if request.method == "OPTIONS":
-        return "", 200  # Handle OPTIONS request for preflight
-
-  # Cancel reservation logic (delete from DB)
-    reservation = Reservation.query.filter_by(id=id).first()
-
-    if reservation:
-        db.session.delete(reservation)  # Delete the reservation
-        db.session.commit()  # Commit the changes to the database
-        return jsonify({"message": "Reservation cancelled successfully"}), 200
-    else:
-        return jsonify({"error": "Reservation not found"}), 404
-    
-
-    
+    return jsonify({"message": f"Welcome {session['user_name']} to the Dashboard!"}), 200

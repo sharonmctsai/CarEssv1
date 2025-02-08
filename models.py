@@ -8,7 +8,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.String(128), nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -24,3 +24,4 @@ class Reservation(db.Model):
     time = db.Column(db.Time, nullable=False)
     status = db.Column(db.String(20), default='Pending')  # 預約狀態
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
