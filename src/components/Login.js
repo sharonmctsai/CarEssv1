@@ -4,15 +4,12 @@ import { UserContext } from '../context/UserContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
 
 const GOOGLE_CLIENT_ID = "563323757566-h08eu7gboig2s82slulk703lnhdq226s.apps.googleusercontent.com"; // Replace with actual client ID
 
 const handleGoogleLoginSuccess = async (response) => {
-    const decodedToken = jwtDecode(response.credential);
 
     const googleUser = {
         token: response.credential,
