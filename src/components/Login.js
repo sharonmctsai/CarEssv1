@@ -91,6 +91,13 @@ function Login() {
         }
     };
 
+    const fetchUserData = async () => {
+        const response = await fetch("http://localhost:5002/api/user/profile");
+        const userData = await response.json();
+        setUser(userData); // Update state with new data
+        localStorage.setItem("user", JSON.stringify(userData)); // Store updated user
+      };
+
     const handleGoogleLoginSuccess = async (response) => {
         const token = response.credential;  // Google token
     

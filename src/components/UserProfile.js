@@ -4,7 +4,6 @@ import { FaUserEdit, FaSave, FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import "./UserProfile.css";
-import { Link } from "react-router-dom";
 
 
 function UserProfile() {
@@ -39,6 +38,7 @@ function UserProfile() {
         }
 
         setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser)); // Store in localStorage
         setIsEditing(false);
         alert("Profile updated successfully!");
     };
