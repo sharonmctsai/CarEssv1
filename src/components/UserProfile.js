@@ -30,18 +30,19 @@ function UserProfile() {
             alert("Password must be at least 6 characters.");
             return;
         }
-
+   
         // Simulate an API call (Replace with backend logic)
         const updatedUser = { ...user, name: formData.name, email: formData.email };
         if (formData.password) {
             updatedUser.password = formData.password;
         }
-
+   
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser)); // Store in localStorage
         setIsEditing(false);
         alert("Profile updated successfully!");
     };
+   
 
     return (
         <div className="profile-container">

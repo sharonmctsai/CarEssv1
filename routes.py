@@ -3,6 +3,7 @@ from models import db, User, Reservation
 from datetime import datetime
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
+from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)  # initialize the Flask app
 
@@ -234,3 +235,30 @@ def dashboard():
         return jsonify({"error": "Not logged in", "redirect": "/api/login"}), 401
 
     return jsonify({"message": f"Welcome {session['user_name']} to the Dashboard!"}), 200
+
+@auth.route('/api/user/update', methods=['PUT'])
+def update_user():
+    try:
+        data = request.get_json()
+        user_email = session.get("user_email") or data.get("email")  # Use session OR request data
+
+        if not user_email:
+            return jsonify({"error": "Unauthorized"}), 401
+
+        user = User.query.filter_by(email=user_email).first()
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Update only provided fields
+        user.name = data.get("name", user.name)
+        if "password" in data and data["password"]:
+            user.set_password(data["password"])
+
+        db.session.commit()
+
+        return jsonify({"message": "User updated successfully", "name": user.name, "email": user.email}), 200
+
+    except Exception as e:
+        print(f"Error updating user: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
