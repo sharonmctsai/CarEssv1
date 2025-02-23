@@ -7,8 +7,6 @@ from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)  # initialize the Flask app
 
-
-
 # 創建 Blueprint
 auth = Blueprint('auth', __name__)
 
@@ -46,8 +44,6 @@ def google_login():
             "email": user.email
         }), 200
     
-    
-
     except Exception as e:
         print(f"Google OAuth error: {e}")
         return jsonify({"error": "Invalid token or Google authentication failed"}), 400

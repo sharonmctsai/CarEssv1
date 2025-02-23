@@ -1,0 +1,117 @@
+/* Background: Futuristic Dark Theme */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #1a1a2e, #16213e); /* Dark blue gradient */
+}
+
+/* Centered Glassmorphism Form */
+.login-form {
+    background: #615663;
+    padding: 40px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 10px rgba(76, 201, 240, 0.2); /* Light blue shadow */
+    text-align: center;
+    width: 450px;
+}
+
+/* Admin Form Hover Effect */
+.login-form:hover {
+    background: rgba(0, 0, 0, 0.8); /* Black background with slight transparency */
+    transition: background 0.3s ease-in-out;
+}
+
+/* Title */
+.login-form h2 {
+    color: #fff;
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Input Fields - Neon Light Blue Glow */
+.form-control {
+    background: transparent;
+    border: 2px solid #4cc9f0; /* Light Blue */
+    color: rgba(255, 255, 255, 0.802);
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: 0.3s ease-in-out;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-control:focus {
+    border-color: #4cc9f0;
+    box-shadow: 0 0 10px #4cc9f0;
+    background: transparent;
+}
+
+/* Neon Button - Light Blue */
+.neon-button {
+    background-color: #4cc9f0;
+    color: white;
+    padding: 15px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 10px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.neon-button:hover {
+    background-color: #3da9d5;
+    box-shadow: 0 0 18px #4cc9f0;
+}
+
+/* Futuristic Neon Cancel Button */
+.cancel-button {
+    background: rgba(255, 0, 0, 0.4); /* Semi-transparent red */
+    border: 2px solid #ff4c4c;
+    color: #fff;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    transition: 0.3s ease-in-out;
+    width: 100%;
+    margin-top: 15px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cancel-button:hover {
+    background: #ff4c4c;
+    box-shadow: 0 0 18px rgba(255, 76, 76, 0.8);
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+    .login-form {
+        width: 90%;
+    }
+}
+
+/* Eye Icon for Password */
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #00bcd4;
+}
+
+.eye-icon:hover {
+    color: #00cc70;
+}
