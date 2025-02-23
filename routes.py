@@ -7,15 +7,13 @@ from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)  # initialize the Flask app
 
-# Setup database, configurations, etc.
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_database.db'  # Example URI
-db.init_app(app)
+
 
 # 創建 Blueprint
 auth = Blueprint('auth', __name__)
 
 # Replace with your Google OAuth client ID
-GOOGLE_CLIENT_ID = "563323757566-h08eu7gboig2s82slulk703lnhdq226s.apps.googleusercontent.com"
+GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"
 
 @auth.route("/api/auth/google", methods=["POST"])
 def google_login():

@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import db  # 使用 models.py 中的 db 實例
 from routes import auth
-from flask_cors import CORS
 from flask_migrate import Migrate  # Import Migrate
 from dotenv import load_dotenv
 import os  # Import os to access environment variables

@@ -27,11 +27,11 @@ function Home() {
                 <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
                 <Nav.Link as={Link} to="/reservation">Reservation</Nav.Link>
                 <Nav.Link as={Link} to="/about">About</Nav.Link>
+                <Nav.Link disabled style={{ color: 'white' }}>Hello, {username}</Nav.Link>
 
                 <Nav.Link as={Link} to="/" onClick={() => { localStorage.removeItem("user"); window.location.reload(); }}>
               Logout
                  </Nav.Link>
-                 <Nav.Link disabled style={{ color: 'white' }}>Hello, {username}</Nav.Link>
 
 
                 </>

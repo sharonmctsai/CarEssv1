@@ -7,7 +7,37 @@ import './Login.css';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
-const GOOGLE_CLIENT_ID = "563323757566-h08eu7gboig2s82slulk703lnhdq226s.apps.googleusercontent.com"; // Replace with actual client ID
+const GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"; // Replace with actual client ID
+
+const handleGoogleLoginSuccess = async (response) => {
+
+    const googleUser = {
+        token: response.credential,
+    };
+
+    try {
+        const res = await fetch("http://localhost:5002/api/auth/google", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(googleUser),
+        });
+
+        if (res.ok) {
+            const userData = await res.json();
+            localStorage.setItem("user", JSON.stringify(userData));
+            console.log("Google login successful:", userData);
+        } else {
+            console.error("Google login failed");
+        }
+    } catch (error) {
+        console.error("Error during Google login:", error);
+    }
+};
+
+
+<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <GoogleLogin onSuccess={handleGoogleLoginSuccess} onError={() => console.log("Google login failed")} />
+</GoogleOAuthProvider>;
 
 
 function Login() {
