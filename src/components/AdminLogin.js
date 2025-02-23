@@ -53,42 +53,46 @@ function AdminLogin() {
 };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-      <Card className="login-form" style={{ width: '350px' }}>
-        <Card.Body>
-          <h2 className="text-center mb-4">Admin Access</h2>
-          <Form onSubmit={handleAdminLogin}>
-            {/* Email Field */}
-                <div className="input-group">
-                    <FaEnvelope className="icon" />
-                    <input
-                type="text" 
-                placeholder="Admin Email" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-                required 
-              />
-              </div>
+    <div className="admin-container">
+    <div className="admin-card">
+      <h2>Admin Login</h2>
+      <form onSubmit={handleAdminLogin} className="admin-form">
+        <div className="form-group">
+        <div className="input-container">
+        <FaEnvelope className="icon" />
+          <input 
+           type="email"
+           name="email"
+           placeholder="Email"
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+            className="input-field"
 
-              {/* Password Field */}
-                <div className="input-group">
-                 <FaLock className="icon" />
-                 <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                required 
-              />
+            required 
+          />
+        </div>
+        </div>
+        <div className="form-group">
+        <div className="input-container">
+        <FaLock className="icon" />
+          <input 
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            className="input-field"
+            required 
+          />
             <span className="eye-icon" onClick={togglePasswordVisibility}>
-                        {showPassword ? <FaEye /> : <FaEyeSlash />}
-                    </span>
-                    </div>
+             {showPassword ? <FaEye /> : <FaEyeSlash />}
+         </span>
+        </div>
+        </div>
              {/* Login Button */}
              <button
                     type="submit"
-                    className="neon-button"
-                    style={{ backgroundColor: isHovered ? "#00cc70" : "#4cc9f0" }}
+                    className="admin-neon-button"
+                    style={{ backgroundColor: isHovered ? "#00cc70" : "#ff7f50" }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
@@ -103,10 +107,9 @@ function AdminLogin() {
             >
               Cancel
             </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-    </Container>
+          </form>
+   </div>
+   </div>
   );
 }
 
