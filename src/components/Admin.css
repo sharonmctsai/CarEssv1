@@ -108,15 +108,15 @@
   }
   
   /* Style for Input Fields */
-  .input-group .input-field {
+  .input-field {
     width: 100%;
-    padding: 12px 12px 12px 55px; /* Moves placeholder text to the right */
-    border: 1px solid #ccc;
+    padding-left: 50px; /* Moves placeholder and text inside the input */
     border-radius: 5px;
     font-size: 16px;
     background: transparent;
-    color: white;
-  }
+    color: black;
+}
+    
 
   /*  Move Placeholder to the Right */
 .input-container .input-field::placeholder {

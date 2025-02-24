@@ -15,7 +15,7 @@ function AdminLogin() {
   const handleAdminLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5001/api/login', {
+      const response = await axios.post('http://localhost:5002/api/admin-login', {
         email: username,
         password,
       });

@@ -28,14 +28,12 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/about" element={<About />} />
 
-                  <Route element={<ProtectedRoute />}>
                       <Route path="/dashboard" element={<UserDashboard />} />
                       <Route path="/profile" element={<UserProfile />} /> 
 
                       <Route path="/admin-dashboard" element={<AdminDashboard />} />
                       <Route path="/admin-login" element={<AdminLogin />} />
                       <Route path="/reservation" element={<Reservation />} />
-                  </Route>
               </Routes>
               {/* Add ToastContainer here to render toast notifications */}
               <ToastContainer

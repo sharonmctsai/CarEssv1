@@ -103,3 +103,12 @@
 .password-icon:hover {
     color: #00cc70;
 }
+
+.input-group .form-control {
+    width: 100%;
+    padding-left: 50px; /* Moves placeholder and text inside the input */
+    border-radius: 5px;
+    font-size: 16px;
+    background: transparent;
+    color: black;
+}
