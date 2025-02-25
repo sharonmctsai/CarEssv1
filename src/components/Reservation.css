@@ -4,7 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to right, #1a1a2e, #16213e); /* Dark blue gradient */
+    background: linear-gradient(to right, #4b4b65, #16213e); /* Dark blue gradient */
 }
 
 /* Centered Glassmorphism Form */
@@ -86,6 +86,8 @@
         width: 90%;
     }
 }
+
+
 .cancel-button:hover {
     background-color: #e03e3e;
 }

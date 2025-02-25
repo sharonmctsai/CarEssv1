@@ -30,17 +30,18 @@ function UserDashboard() {
         }
     }, [user?.email]);
 
-    useEffect(() => {
-        if (user?.email) {
-            fetch(`http://localhost:5002/api/history?email=${user.email}`)
-                .then((res) => res.json())
-                .then((data) => {
-                    console.log("History Data:", data);  // Debugging log
-                    setHistory(data);
-                })
-                .catch(() => console.error("Failed to load reservation history"));
-        }
-    }, [user?.email]);
+useEffect(() => {
+    if (user?.email) {
+        fetch(`http://localhost:5002/api/reservations?email=${user.email}&history=1`)
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("History Data:", data);
+                setHistory(data);
+            })
+            .catch(() => console.error("Failed to load reservation history"));
+    }
+}, [user?.email]);
+
     
 
     const handleCancelReservation = (id) => {
