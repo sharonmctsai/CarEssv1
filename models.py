@@ -25,3 +25,9 @@ class Reservation(db.Model):
     status = db.Column(db.String(20), default='Pending')  # 預約狀態
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    car_model = db.Column(db.String(80), nullable=True)
+    license_plate = db.Column(db.String(80), nullable=True)
+class ServiceItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.String(255), nullable=True)

@@ -1,6 +1,6 @@
 from flask import Blueprint, Flask, request, jsonify, session
-from models import db, User, Reservation
-from datetime import datetime
+from models import db, User, Reservation, ServiceItem
+from datetime import datetime, date, timedelta
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 from werkzeug.security import generate_password_hash
@@ -12,6 +12,45 @@ auth = Blueprint('auth', __name__)
 
 # Replace with your Google OAuth client ID
 GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"
+
+# This route will create a link to add the reservation to Google Calendar
+@auth.route('/api/add-to-google-calendar/<int:id>', methods=['GET'])
+def add_to_google_calendar(id):
+    try:
+        print(f"Received reservation ID: {id}")  # Log the received ID for debugging
+
+        reservation = Reservation.query.get(id)
+        if not reservation:
+            return jsonify({"error": "Reservation not found"}), 404
+
+    
+        # Combine date and time into datetime objects
+        start_datetime = datetime.combine(reservation.date, reservation.time)
+        end_datetime = start_datetime + timedelta(hours=1)
+
+        # Format as required by Google Calendar (YYYYMMDDTHHMMSS)
+        start_time = start_datetime.strftime("%Y%m%dT%H%M%S")
+        end_time = end_datetime.strftime("%Y%m%dT%H%M%S")
+
+
+        # Format reservation data into Google Calendar parameters
+        event_details = {
+            "summary": reservation.service_type,
+            "description": f"Your {reservation.service_type} appointment.",
+            "start_time": start_time,
+            "end_time": end_time,
+            "attendees": [reservation.user_email],  # Optional: Add more attendees if needed
+            "time_zone": "Europe/Dublin"  # Adjust time zone if necessary
+        }
+
+        # Convert event details to a Google Calendar URL
+        calendar_url = f"https://www.google.com/calendar/render?action=TEMPLATE&text={event_details['summary']}&dates={event_details['start_time']}/{event_details['end_time']}&details={event_details['description']}&ctz={event_details['time_zone']}"
+
+        return jsonify({"calendar_url": calendar_url}), 200
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
 @auth.route("/api/auth/google", methods=["POST"])
 def google_login():
@@ -110,28 +149,7 @@ def login():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
     
-@auth.route('/api/reservations', methods=['GET'])
-def get_reservations():
-    email = request.args.get('email')  # Get the email from query params
-    
-    if not email:
-        return jsonify({"error": "Email parameter is required"}), 400
-    
-    reservations = Reservation.query.filter_by(user_email=email).all()
 
-    # Convert the reservations to a list of dictionaries
-    reservations_list = [
-        {
-            "id": res.id,
-            "service_type": res.service_type,
-            "date": res.date.strftime("%Y-%m-%d"),
-            "time": res.time.strftime("%H:%M"),
-            "status": res.status
-        }
-        for res in reservations
-    ]
-
-    return jsonify(reservations_list), 200
 
 @auth.route('/api/history', methods=['GET'])
 def get_reservation_history():
@@ -153,7 +171,9 @@ def get_reservation_history():
             "service_type": res.service_type,
             "date": res.date.strftime("%Y-%m-%d"),
             "time": res.time.strftime("%H:%M"),
-            "status": res.status
+            "status": res.status,
+             "car_model": r.car_model,
+            "license_plate": r.license_plate
         }
         for res in past_reservations
     ]
@@ -161,65 +181,94 @@ def get_reservation_history():
     return jsonify(history_list), 200
 
 
+# 查詢使用者預約（分未來預約與歷史預約）
+@auth.route('/api/reservations', methods=['GET'])
+def get_reservations():
+    try:
+        email = request.args.get('email')
+        is_history = request.args.get('history', '0') == '1'
+        all_reservations = Reservation.query.filter_by(user_email=email).all()
+        if is_history:
+            filtered = [r for r in all_reservations if r.date < date.today()]
+        else:
+            filtered = [r for r in all_reservations if r.date >= date.today()]
+        return jsonify([{
+            "id": r.id,
+            "service_type": r.service_type,
+            "date": r.date.strftime("%Y-%m-%d"),
+            "time": r.time.strftime("%H:%M"),
+            "status": r.status,
+            "car_model": r.car_model,
+            "license_plate": r.license_plate
+        } for r in filtered]), 200
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+# -----------------------------
+# 查詢可用時段（使用全域 AVAILABLE_TIMES）
+AVAILABLE_TIMES = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00","16:00","17:00"]
+
 @auth.route('/api/available-times', methods=['GET'])
 def get_available_times():
     try:
-        date = request.args.get('date')
-        reservations = Reservation.query.filter_by(date=datetime.strptime(date, "%Y-%m-%d").date()).all()
-        reserved_times = [r.time.strftime("%H:%M") for r in reservations]
-        all_times = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00"]
-        available_times = [t for t in all_times if t not in reserved_times]
-        return jsonify({"available_times": available_times}), 200
+        date_str = request.args.get('date')
+        if date_str:
+            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+            reservations = Reservation.query.filter_by(date=date_obj).all()
+            reserved_times = [r.time.strftime("%H:%M") for r in reservations]
+            available = [t for t in AVAILABLE_TIMES if t not in reserved_times]
+            return jsonify({"available_times": available}), 200
+        else:
+            return jsonify({"available_times": AVAILABLE_TIMES}), 200
     except Exception as e:
-        print(f"Error occurred: {e}")
+        print(e)
         return jsonify({"error": "Internal Server Error"}), 500
 
-@auth.route('/api/reserve', methods=['POST', 'OPTIONS'])
-def reserve():
-    if request.method == 'OPTIONS':
-        # Respond to the OPTIONS preflight request
-        return '', 200  # Just return an empty response with status 200
-
+@auth.route('/api/update-available-times', methods=['POST'])
+def update_available_times():
     try:
-        # Receive the reservation data from the frontend
+        data = request.get_json()
+        new_times = data.get('available_times')
+        global AVAILABLE_TIMES
+        if isinstance(new_times, list):
+            AVAILABLE_TIMES = new_times
+            return jsonify({"message": "Available times updated"}), 200
+        else:
+            return jsonify({"error": "Invalid data format"}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Server Error"}), 500
+
+# -----------------------------
+# 建立預約（含車輛資訊）
+@auth.route('/api/reserve', methods=['POST'])
+def reserve():
+    try:
         data = request.get_json()
         service_type = data.get('service_type')
-        date = data.get('date')
-        time = data.get('time')
         user_email = data.get('user_email')
-
-        # Ensure the necessary data is provided
-        if not all([service_type, date, time, user_email]):
-            return jsonify({"error": "Missing required fields"}), 400
-
-        # Create a new reservation instance
+        date_str = data.get('date')
+        time_str = data.get('time')
+        car_model = data.get('car_model')
+        license_plate = data.get('license_plate')
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+        time_obj = datetime.strptime(time_str, "%H:%M").time()
         new_reservation = Reservation(
-            service_type=service_type,
-            date=datetime.strptime(date, "%Y-%m-%d").date(),
-            time=datetime.strptime(time, "%H:%M").time(),
             user_email=user_email,
-            status="Pending",  # You can adjust the default status as per your logic
+            service_type=service_type,
+            date=date_obj,
+            time=time_obj,
+            car_model=car_model,
+            license_plate=license_plate
         )
-
-        # Add the reservation to the database
         db.session.add(new_reservation)
         db.session.commit()
-
-        # Return the created reservation data as response
-        return jsonify({
-            "message": "Reservation successful",
-            "reservation": {
-                "id": new_reservation.id,
-                "service_type": new_reservation.service_type,
-                "date": new_reservation.date.strftime("%Y-%m-%d"),
-                "time": new_reservation.time.strftime("%H:%M"),
-                "status": new_reservation.status
-            }
-        }), 200
-
+        return jsonify({"message": "Reservation created successfully"}), 201
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
+
 
 @auth.route("/dashboard")
 def dashboard():
@@ -255,4 +304,47 @@ def update_user():
 
     except Exception as e:
         print(f"Error updating user: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+
+# -----------------------------
+# 服務項目管理
+@auth.route('/api/service-items', methods=['GET'])
+def get_service_items():
+    try:
+        items = ServiceItem.query.all()
+        return jsonify([{
+            "id": item.id,
+            "name": item.name,
+            "description": item.description
+        } for item in items]), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Server Error"}), 500
+
+@auth.route('/api/service-items', methods=['POST'])
+def add_service_item():
+    try:
+        data = request.get_json()
+        name = data.get('name')
+        description = data.get('description')
+        new_item = ServiceItem(name=name, description=description)
+        db.session.add(new_item)
+        db.session.commit()
+        return jsonify({"message": "Service item added"}), 201
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Server Error"}), 500
+
+@auth.route('/api/service-items/<int:id>', methods=['DELETE'])
+def delete_service_item(id):
+    try:
+        item = ServiceItem.query.get(id)
+        if item:
+            db.session.delete(item)
+            db.session.commit()
+            return jsonify({"message": "Service item deleted"}), 200
+        return jsonify({"error": "Service item not found"}), 404
+    except Exception as e:
+        print(e)
         return jsonify({"error": "Internal Server Error"}), 500
