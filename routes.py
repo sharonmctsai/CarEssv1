@@ -279,6 +279,9 @@ def dashboard():
 
     return jsonify({"message": f"Welcome {session['user_name']} to the Dashboard!"}), 200
 
+
+# -----------------------------
+# User profile
 @auth.route('/api/user/update', methods=['PUT'])
 def update_user():
     try:
@@ -306,6 +309,149 @@ def update_user():
         print(f"Error updating user: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
+
+# -----------------------------
+# Admin to view all tge reservation 管理員查詢所有預約
+@auth.route('/api/all-reservations', methods=['GET'])
+def get_all_reservations():
+    try:
+        reservations = Reservation.query.all()
+        return jsonify([{
+            "id": r.id,
+            "user_email": r.user_email,
+            "service_type": r.service_type,
+            "date": r.date.strftime("%Y-%m-%d"),
+            "time": r.time.strftime("%H:%M"),
+            "status": r.status,
+            "car_model": r.car_model,
+            "license_plate": r.license_plate
+        } for r in reservations]), 200
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+
+
+# -----------------------------
+#  update reservation 更新預約（使用者可修改預約內容）
+@auth.route('/api/update-reservation/<int:id>', methods=['PUT'])
+def update_reservation(id):
+    try:
+        data = request.get_json()
+        reservation = Reservation.query.get(id)
+        if not reservation:
+            return jsonify({"error": "Reservation not found"}), 404
+        if 'service_type' in data:
+            reservation.service_type = data['service_type']
+        if 'date' in data:
+            reservation.date = datetime.strptime(data['date'], "%Y-%m-%d").date()
+        if 'time' in data:
+            reservation.time = datetime.strptime(data['time'], "%H:%M").time()
+        if 'car_model' in data:
+            reservation.car_model = data['car_model']
+        if 'license_plate' in data:
+            reservation.license_plate = data['license_plate']
+
+            reservation.status = "pending"
+
+        db.session.commit()
+        return jsonify({"message": "Reservation updated successfully"}), 200
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+
+
+# -----------------------------
+# Admin reservation management 管理員更新預約狀態
+@auth.route('/api/update-reservation-status', methods=['POST'])
+def update_reservation_status():
+    try:
+        data = request.get_json()
+        reservation_id = data.get('id')
+        new_status = data.get('status')
+        reservation = Reservation.query.get(reservation_id)
+        if not reservation:
+            return jsonify({"error": "Reservation not found"}), 404
+        reservation.status = new_status
+        db.session.commit()
+        return jsonify({"message": "Reservation status updated successfully"}), 200
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+# -----------------------------
+# notification frequency 更新通知設定（提醒頻率）
+REMINDER_FREQUENCY = "daily"
+
+@auth.route('/api/update-notification-settings', methods=['POST'])
+def update_notification_settings():
+    try:
+        data = request.get_json()
+        reminder_frequency = data.get('reminder_frequency')
+        global REMINDER_FREQUENCY
+        REMINDER_FREQUENCY = reminder_frequency
+        return jsonify({"message": "Notification settings updated"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Server Error"}), 500
+# -----------------------------
+
+# Notification in 24hrs：根據使用者在未來 24 小時內的預約產生提醒
+@auth.route('/api/notifications', methods=['GET'])
+def get_notifications():
+    try:
+        email = request.args.get('email')
+        if not email:
+            return jsonify({"error": "Email parameter is required"}), 400
+        today = date.today()
+        tomorrow = today + timedelta(days=1)
+        reservations = Reservation.query.filter(
+            Reservation.user_email == email,
+            Reservation.date >= today,
+            Reservation.date <= tomorrow
+        ).all()
+        notifications = []
+        for res in reservations:
+            message = f"Your reservation for {res.service_type} on {res.date.strftime('%Y-%m-%d')} at {res.time.strftime('%H:%M')} is coming up."
+            notifications.append({
+                "id": res.id,
+                "message": message,
+                "date": res.date.strftime('%Y-%m-%d')
+            })
+        return jsonify(notifications), 200
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+
+# -----------------------------
+# 資料管理 data – management for customers
+@auth.route('/api/customers', methods=['GET'])
+def get_customers():
+    try:
+        customers = User.query.all()
+        return jsonify([{
+            "id": c.id,
+            "name": c.name,
+            "email": c.email
+        } for c in customers]), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Server Error"}), 500
+
+@auth.route('/api/customers/<int:id>', methods=['DELETE'])
+def delete_customer(id):
+    try:
+        customer = User.query.get(id)
+        if customer:
+            db.session.delete(customer)
+            db.session.commit()
+            return jsonify({"message": "Customer deleted"}), 200
+        return jsonify({"error": "Customer not found"}), 404
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Server Error"}), 500
 
 # -----------------------------
 # 服務項目管理

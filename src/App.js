@@ -12,8 +12,11 @@ import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
 import Reservation from './components/Reservation';
 import About from "./components/About";
-import ProtectedRoute from './components/ProtectedRoute';
-import { ToastContainer } from 'react-toastify'; // Import ToastContainer
+import AvailableTimesManagement from './components/AvailableTimesManagement';
+import DataManagement from './components/DataManagement';
+import Notifications from './components/Notifications';
+
+import NotificationManagement from './components/NotificationManagement';import { ToastContainer } from 'react-toastify'; // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for toast notifications
 
 function App() {
@@ -34,6 +37,11 @@ function App() {
                       <Route path="/admin-dashboard" element={<AdminDashboard />} />
                       <Route path="/admin-login" element={<AdminLogin />} />
                       <Route path="/reservation" element={<Reservation />} />
+                      <Route path="/notifications" element={<Notifications />} />
+                      <Route path="/admin/notification-management" element={<NotificationManagement />} />
+
+                      <Route path="/admin/available-times" element={<AvailableTimesManagement />} />
+                      <Route path="/admin/data-management" element={<DataManagement />} />
               </Routes>
               {/* Add ToastContainer here to render toast notifications */}
               <ToastContainer
