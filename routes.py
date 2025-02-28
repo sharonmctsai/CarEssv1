@@ -4,6 +4,8 @@ from datetime import datetime, date, timedelta
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 from werkzeug.security import generate_password_hash
+from flask_cors import cross_origin
+
 
 app = Flask(__name__)  # initialize the Flask app
 auth = Blueprint('auth', __name__)
@@ -287,7 +289,9 @@ def get_all_reservations():
 
 # -----------------------------
 # 更新預約（使用者可修改預約內容）
-@auth.route('/api/update-reservation/<int:id>', methods=['PUT'])
+@auth.route('/api/update-reservation/<int:id>', methods=['PUT', 'OPTIONS'])
+@cross_origin()
+
 def update_reservation(id):
     try:
         data = request.get_json()
