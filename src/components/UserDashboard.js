@@ -239,22 +239,20 @@ useEffect(() => {
                                 <th>Service</th>
                                 <th>Date</th>
                                 <th>Time</th>
-                                <th>Status</th>
                                 <th>Car Model</th>
                                 <th>License Plate</th>
+                                <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {history.map((res, index) => (
                                     <tr key={res.id}>
-                                        <td>{index + 1}</td>
+                                          <td>{index + 1}</td>
                                         <td>{res.service_type}</td>
                                         <td>{res.date}</td>
                                         <td>{res.time}</td>
-                                        <td>{res.status}</td>
                                         <td>{res.car_model}</td>
                                         <td>{res.license_plate}</td>
-                                        <td><FaClock className="me-1" /> {res.time}</td>
                                         <td>
                                             <Badge 
                                             className={`bg-${res.status === 'Pending' ? 'warning text-dark' : 
