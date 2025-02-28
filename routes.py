@@ -6,10 +6,9 @@ from google.oauth2 import id_token
 from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)  # initialize the Flask app
-
-# 創建 Blueprint
 auth = Blueprint('auth', __name__)
 
+# -----------------------------
 # Replace with your Google OAuth client ID
 GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"
 
@@ -86,7 +85,7 @@ def google_login():
     except Exception as e:
         print(f"Google OAuth error: {e}")
         return jsonify({"error": "Invalid token or Google authentication failed"}), 400
-    
+        
 # Define the cancel reservation route
 @auth.route("/api/cancel-reservation/<int:id>", methods=["DELETE", "OPTIONS"])
 def cancel_reservation(id):
@@ -103,52 +102,46 @@ def cancel_reservation(id):
     else:
         return jsonify({"error": "Reservation not found"}), 404
 
+
+# 用戶註冊
 @auth.route('/api/register', methods=['POST'])
 def register():
     try:
-        # 接收用戶提交的數據
         data = request.get_json()
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
-
-        # 檢查用戶是否已存在
         if User.query.filter_by(email=email).first():
             return jsonify({"error": "Email already exists"}), 400
-
-        # 創建新用戶
         new_user = User(name=name, email=email)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
-
         return jsonify({"message": "User registered successfully"}), 201
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
+# -----------------------------
+# 用戶登入
 @auth.route('/api/login', methods=['POST'])
 def login():
     try:
-        # 接收用戶提交的數據
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
-
-        # 查詢用戶
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
-            # Return user details along with the success message
-            return jsonify({
-                "message": "Login successful",
-                "name": user.name,  # Include the user's name
-                "email": user.email  # Include the user's email
-            }), 200
+            is_admin = (email == "admin@example.com")  # 簡單判斷 admin 帳號
+            return jsonify({"message": "Login successful", "is_admin": is_admin, "name": user.name}), 200
         return jsonify({"error": "Invalid email or password"}), 401
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
-    
+
+@auth.route('/api/admin-login', methods=['POST'])
+def admin_login():
+    return login()  # Call the existing login function
 
 
 @auth.route('/api/history', methods=['GET'])
@@ -172,7 +165,7 @@ def get_reservation_history():
             "date": res.date.strftime("%Y-%m-%d"),
             "time": res.time.strftime("%H:%M"),
             "status": res.status,
-             "car_model": r.car_model,
+              "car_model": r.car_model,
             "license_plate": r.license_plate
         }
         for res in past_reservations
@@ -181,6 +174,7 @@ def get_reservation_history():
     return jsonify(history_list), 200
 
 
+# -----------------------------
 # 查詢使用者預約（分未來預約與歷史預約）
 @auth.route('/api/reservations', methods=['GET'])
 def get_reservations():
@@ -270,48 +264,9 @@ def reserve():
         return jsonify({"error": "Internal Server Error"}), 500
 
 
-@auth.route("/dashboard")
-def dashboard():
-    print(f"Session data in /dashboard: {session}")  # Debug session storage
-    if 'user_email' not in session:
-        print("User is not logged in, redirecting to login.")
-        return jsonify({"error": "Not logged in", "redirect": "/api/login"}), 401
-
-    return jsonify({"message": f"Welcome {session['user_name']} to the Dashboard!"}), 200
-
 
 # -----------------------------
-# User profile
-@auth.route('/api/user/update', methods=['PUT'])
-def update_user():
-    try:
-        data = request.get_json()
-        user_email = session.get("user_email") or data.get("email")  # Use session OR request data
-
-        if not user_email:
-            return jsonify({"error": "Unauthorized"}), 401
-
-        user = User.query.filter_by(email=user_email).first()
-
-        if not user:
-            return jsonify({"error": "User not found"}), 404
-
-        # Update only provided fields
-        user.name = data.get("name", user.name)
-        if "password" in data and data["password"]:
-            user.set_password(data["password"])
-
-        db.session.commit()
-
-        return jsonify({"message": "User updated successfully", "name": user.name, "email": user.email}), 200
-
-    except Exception as e:
-        print(f"Error updating user: {e}")
-        return jsonify({"error": "Internal Server Error"}), 500
-
-
-# -----------------------------
-# Admin to view all tge reservation 管理員查詢所有預約
+# 管理員查詢所有預約
 @auth.route('/api/all-reservations', methods=['GET'])
 def get_all_reservations():
     try:
@@ -330,10 +285,8 @@ def get_all_reservations():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-
-
 # -----------------------------
-#  update reservation 更新預約（使用者可修改預約內容）
+# 更新預約（使用者可修改預約內容）
 @auth.route('/api/update-reservation/<int:id>', methods=['PUT'])
 def update_reservation(id):
     try:
@@ -360,10 +313,8 @@ def update_reservation(id):
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-
-
 # -----------------------------
-# Admin reservation management 管理員更新預約狀態
+# 管理員更新預約狀態
 @auth.route('/api/update-reservation-status', methods=['POST'])
 def update_reservation_status():
     try:
@@ -381,7 +332,7 @@ def update_reservation_status():
         return jsonify({"error": "Internal Server Error"}), 500
 
 # -----------------------------
-# notification frequency 更新通知設定（提醒頻率）
+# 更新通知設定（提醒頻率）
 REMINDER_FREQUENCY = "daily"
 
 @auth.route('/api/update-notification-settings', methods=['POST'])
@@ -395,9 +346,9 @@ def update_notification_settings():
     except Exception as e:
         print(e)
         return jsonify({"error": "Internal Server Error"}), 500
-# -----------------------------
 
-# Notification in 24hrs：根據使用者在未來 24 小時內的預約產生提醒
+# -----------------------------
+# 動態產生通知：根據使用者在未來 24 小時內的預約產生提醒
 @auth.route('/api/notifications', methods=['GET'])
 def get_notifications():
     try:
@@ -424,9 +375,8 @@ def get_notifications():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-
 # -----------------------------
-# 資料管理 data – management for customers
+# 資料管理 – 客戶管理
 @auth.route('/api/customers', methods=['GET'])
 def get_customers():
     try:
@@ -493,4 +443,43 @@ def delete_service_item(id):
         return jsonify({"error": "Service item not found"}), 404
     except Exception as e:
         print(e)
+        return jsonify({"error": "Internal Server Error"}), 500
+
+# -----------------------------
+# (選擇性) 產生 Demo 資料
+@auth.route('/api/seed', methods=['POST'])
+def seed_data():
+    try:
+        if not User.query.filter_by(email="demo1@example.com").first():
+            user1 = User(name="Demo User1", email="demo1@example.com")
+            user1.set_password("123456")
+            db.session.add(user1)
+        if not User.query.filter_by(email="demo2@example.com").first():
+            user2 = User(name="Demo User2", email="demo2@example.com")
+            user2.set_password("123456")
+            db.session.add(user2)
+        if not Reservation.query.all():
+            r1 = Reservation(
+                user_email="demo1@example.com",
+                service_type="Pre NCT",
+                date=datetime(2023, 12, 1).date(),
+                time=datetime.strptime("09:00", "%H:%M").time(),
+                status="Pending",
+                car_model="Toyota Corolla",
+                license_plate="ABC-123"
+            )
+            r2 = Reservation(
+                user_email="demo2@example.com",
+                service_type="Car Servicing",
+                date=datetime(2023, 11, 28).date(),
+                time=datetime.strptime("13:00", "%H:%M").time(),
+                status="Pending",
+                car_model="Honda Civic",
+                license_plate="XYZ-789"
+            )
+            db.session.add_all([r1, r2])
+        db.session.commit()
+        return jsonify({"message": "Demo data created successfully"}), 201
+    except Exception as e:
+        print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Alert, Spinner, Button, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function AdminDashboard() {
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate(); 
 
     // 取得所有預約資料
     useEffect(() => {
@@ -61,6 +62,9 @@ function AdminDashboard() {
                     <Button as={Link} to="/admin/data-management" variant="info">
                         Data Management
                     </Button>
+
+                    <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button> {/* Navigate to the previous page */}
+
                 </Col>
             </Row>
 

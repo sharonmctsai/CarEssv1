@@ -11,6 +11,7 @@ import UserProfile from "./components/UserProfile";
 import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
 import Reservation from './components/Reservation';
+import EditReservation from './components/EditReservation';
 import About from "./components/About";
 import AvailableTimesManagement from './components/AvailableTimesManagement';
 import DataManagement from './components/DataManagement';
@@ -37,6 +38,8 @@ function App() {
                       <Route path="/admin-dashboard" element={<AdminDashboard />} />
                       <Route path="/admin-login" element={<AdminLogin />} />
                       <Route path="/reservation" element={<Reservation />} />
+                      <Route path="/edit-reservation/:id" element={<EditReservation />} />
+
                       <Route path="/notifications" element={<Notifications />} />
                       <Route path="/admin/notification-management" element={<NotificationManagement />} />
 
