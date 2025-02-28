@@ -189,8 +189,10 @@ function EditReservation() {
                 </Form.Group>
 
                 <Button variant="primary" type="submit" disabled={loading}>
-                    {loading ? "Updating..." : "Update Reservation"}
+                    {loading ? "Updating..." : " ↻  Update Reservation"}
                 </Button>
+                <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button> {/* Navigate to the previous page */}
+
             </Form>
         </Container>
     );
