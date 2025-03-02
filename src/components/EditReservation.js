@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Container, Form, Button, Spinner } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import { FaSyncAlt, FaArrowLeft } from 'react-icons/fa';
 
 function EditReservation() {
     const { user } = useContext(UserContext);
@@ -189,9 +190,14 @@ function EditReservation() {
                 </Form.Group>
 
                 <Button variant="primary" type="submit" disabled={loading}>
-                    {loading ? "Updating..." : " ↻  Update Reservation"}
-                </Button>
-                <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button> {/* Navigate to the previous page */}
+                {loading ? <FaSyncAlt className="spinner-icon" /> : <FaSyncAlt className="me-2" />}
+                {loading ? "Updating..." : "Update Reservation"}
+            </Button>
+
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+                <FaArrowLeft className="me-2" />
+                Back
+            </Button>
 
             </Form>
         </Container>
