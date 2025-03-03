@@ -63,6 +63,10 @@ function AdminDashboard() {
                         Data Management
                     </Button>
 
+                    <Button as={Link} to="/admin/chat" variant="info">
+                        Admin Chat
+                    </Button>
+                    
                     <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button> {/* Navigate to the previous page */}
 
                 </Col>

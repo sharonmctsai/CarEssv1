@@ -1,5 +1,5 @@
 from flask import Blueprint, Flask, request, jsonify, session
-from models import db, User, Reservation, ServiceItem
+from models import db, User, Reservation, ServiceItem, Chat
 from datetime import datetime, date, timedelta
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
@@ -13,6 +13,28 @@ auth = Blueprint('auth', __name__)
 # -----------------------------
 # Replace with your Google OAuth client ID
 GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"
+
+@auth.route('/api/chat', methods=['POST'])
+def send_message():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    message = data.get('message')
+    if not user_id or not message:
+        return jsonify({'error': 'User ID and message are required'}), 400
+    new_message = Chat(user_id=user_id, message=message)
+    db.session.add(new_message)
+    db.session.commit()
+    return jsonify({'message': 'Message sent successfully'}), 201
+
+@auth.route('/api/chat/<int:user_id>', methods=['GET'])
+def get_messages(user_id):
+    messages = Chat.query.filter_by(user_id=user_id).order_by(Chat.timestamp.asc()).all()
+    messages_data = [{
+        'message': msg.message,
+        'timestamp': msg.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    } for msg in messages]
+    return jsonify(messages_data), 200
+
 
 # This route will create a link to add the reservation to Google Calendar
 @auth.route('/api/add-to-google-calendar/<int:id>', methods=['GET'])
@@ -135,7 +157,13 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
             is_admin = (email == "admin@example.com")  # 簡單判斷 admin 帳號
-            return jsonify({"message": "Login successful", "is_admin": is_admin, "name": user.name}), 200
+            return jsonify({
+                "message": "Login successful",
+                "is_admin": user.is_admin,
+                "name": user.name,
+                "id": user.id
+                }), 200
+
         return jsonify({"error": "Invalid email or password"}), 401
     except Exception as e:
         print(f"Error occurred: {e}")

@@ -9,6 +9,7 @@ class User(db.Model):
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=True)
+    is_admin = db.Column(db.Boolean, default=False)  
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -31,3 +32,16 @@ class ServiceItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(255), nullable=True)
+
+class Chat(db.Model):
+    __tablename__ = 'chat'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    message = db.Column(db.String, nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+    reply = db.Column(db.String, nullable=True)  # Field for admin reply
+    is_admin = db.Column(db.Boolean, default=False)  # To differentiate user vs. admin messages
+
+    def __repr__(self):
+        return f'<Chat {self.id}>'

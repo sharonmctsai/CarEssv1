@@ -7,37 +7,7 @@ import './Login.css';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
-const GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"; // Replace with actual client ID
-
-const handleGoogleLoginSuccess = async (response) => {
-
-    const googleUser = {
-        token: response.credential,
-    };
-
-    try {
-        const res = await fetch("http://localhost:5002/api/auth/google", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(googleUser),
-        });
-
-        if (res.ok) {
-            const userData = await res.json();
-            localStorage.setItem("user", JSON.stringify(userData));
-            console.log("Google login successful:", userData);
-        } else {
-            console.error("Google login failed");
-        }
-    } catch (error) {
-        console.error("Error during Google login:", error);
-    }
-};
-
-
-<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-    <GoogleLogin onSuccess={handleGoogleLoginSuccess} onError={() => console.log("Google login failed")} />
-</GoogleOAuthProvider>;
+const GOOGLE_CLIENT_ID = "563323757566-h08eu7gboig2s82slulk703lnhdq226s.apps.googleusercontent.com"; // Replace with actual client ID
 
 
 function Login() {
@@ -88,31 +58,37 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!validateForm()) {
             return; // Do not submit if there are validation errors
         }
-
+    
         try {
             const response = await fetch('http://localhost:5002/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
-
+    
             if (response.ok) {
                 const result = await response.json();
-              
+                console.log("Login Response:", result);  // <-- ADD THIS LINE
+
                 // Save user details to localStorage
-                localStorage.setItem('user', JSON.stringify({ name: result.name, email: formData.email }));
-                setUser({ name: result.name, email: formData.email });
-
+                localStorage.setItem('user', JSON.stringify({ 
+                    id: result.id || "No ID",
+                    name: result.name, 
+                    email: formData.email 
+                }));
+                setUser({ id: result.id, name: result.name, email: formData.email }); // Include userId in the user state
+    
                 toast.success('Login successful!', { autoClose: 2000 });
-
+    
                 // Navigate to user dashboard
                 navigate('/dashboard', { state: { user: result.name } });
             } else {
                 const error = await response.json();
+                console.log("Login Error:", error);  // <-- ADD THIS TO CHECK ERROR RESPONSE
                 toast.error(error.error, { autoClose: 3000 });
             }
         } catch (error) {
@@ -120,7 +96,6 @@ function Login() {
             toast.error('Network error. Please try again.', { autoClose: 3000 });
         }
     };
-
     const fetchUserData = async () => {
         const response = await fetch("http://localhost:5002/api/user/profile");
         const userData = await response.json();
