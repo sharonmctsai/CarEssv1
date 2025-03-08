@@ -2,14 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Form, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { FaSyncAlt, FaArrowLeft, FaPlus, FaMinus } from 'react-icons/fa';
 
 function DataManagement() {
   const [customers, setCustomers] = useState([]);
   const [serviceItems, setServiceItems] = useState([]);
   const [newServiceItem, setNewServiceItem] = useState({ name: '', description: '' });
   const [message, setMessage] = useState('');
-  const navigate = useNavigate(); // Hook for navigation
-
+  const navigate = useNavigate(); 
 
   // 取得客戶資料
   useEffect(() => {
@@ -94,9 +94,9 @@ function DataManagement() {
               <td>{c.name}</td>
               <td>{c.email}</td>
               <td>
-                <Button variant="danger" size="sm" onClick={() => deleteCustomer(c.id)}>
-                  - Delete
-                </Button>
+              <Button variant="danger" size="sm" onClick={() => deleteCustomer(c.id)}>
+    <FaMinus className="me-2" /> Delete
+</Button>
               </td>
             </tr>
           ))}
@@ -120,9 +120,9 @@ function DataManagement() {
               <td>{item.name}</td>
               <td>{item.description}</td>
               <td>
-                <Button variant="danger" size="sm" onClick={() => deleteServiceItem(item.id)}>
-                  - Delete
-                </Button>
+              <Button variant="danger" size="sm" onClick={() => deleteServiceItem(item.id)}>
+    <FaMinus className="me-2" /> Delete
+</Button>
               </td>
             </tr>
           ))}
@@ -152,8 +152,13 @@ function DataManagement() {
 
          />
         </Form.Group>
-        <Button type="submit"> + Add Service Item</Button>
-        <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button> {/* Navigate to the previous page */}
+        <Button type="submit">
+    <FaPlus className="me-2" /> Add Service Item
+</Button>
+        <Button variant="secondary" onClick={() => navigate(-1)}> 
+        <FaArrowLeft className="me-2" />
+        Back
+        </Button> {/* Navigate to the previous page */}
 
       </Form>
     </Container>

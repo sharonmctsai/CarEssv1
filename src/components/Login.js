@@ -7,7 +7,7 @@ import './Login.css';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
-const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"
 
 
 function Login() {

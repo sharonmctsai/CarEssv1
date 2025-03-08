@@ -1,0 +1,112 @@
+/* Reset or set the background of the body */
+body {
+    background-color: #fff; /* Set a white background color for the body */
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Edit Reservation Form */
+.edit-reservation-form {
+    background: #949292; /* Light background color for the form */
+    color: #333; /* Dark text for better contrast */
+    padding: 40px; /* Increased padding for a more spacious layout */
+    border-radius: 12px;
+    width: 80%; /* Form will take up 80% of the page width */
+    max-width: 900px; /* Max width increased for larger screens */
+    margin: 40px auto; /* Added margin for better spacing from other elements */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+
+/* Specific Labels for Date, Time, and Service Type */
+.edit-reservation-form label.service-type,
+.edit-reservation-form label.car-model,
+.edit-reservation-form label.license-plate,
+.edit-reservation-form label.date,
+.edit-reservation-form label.time {
+    font-size: 1.2rem; /* Slightly larger font size for labels */
+    font-weight: 500;
+    color: #333;
+}
+
+/* Form Control (inputs and selects) */
+.custom-input {
+    background-color: #fff; /* Light background for inputs */
+    color: #333; /* Dark text color for the input fields */
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 14px; /* Larger padding for more space */
+    font-size: 1.1rem; /* Slightly larger text for inputs */
+    transition: border 0.3s ease;
+}
+
+/* Focus Effect for Inputs */
+.custom-input:focus {
+    border-color: #00bcd4; /* Bright blue border on focus */
+    outline: none;
+}
+
+/* Buttons */
+.custom-btn {
+    background: #00bcd4; /* Bright cyan color for the button */
+    border: none;
+    padding: 14px 30px; /* Increased padding for a larger button */
+    border-radius: 25px;
+    color: white; /* White text color for the button */
+    font-size: 1.1rem; /* Larger font size for buttons */
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Button Hover Effect */
+.custom-btn:hover {
+    background: #0097a7; /* Darken button on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Spinner Icon */
+.spinner-icon {
+    animation: spin 1s infinite linear;
+    margin-right: 10px;
+}
+
+/* Back Button */
+.custom-back-btn {
+    background: transparent;
+    border: 2px solid #00bcd4;
+    color: #00bcd4; /* Cyan text for the back button */
+    padding: 14px 30px; /* Increased padding for the back button */
+    border-radius: 25px;
+    font-size: 1.1rem; /* Larger font size for back button */
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Back Button Hover Effect */
+.custom-back-btn:hover {
+    background: #00bcd4;
+    color: white; /* Change text to white on hover */
+}
+
+/* Responsive Form */
+@media (max-width: 768px) {
+    .edit-reservation-form {
+        width: 90%; /* Adjust width for smaller screens */
+        padding: 25px; /* Slightly less padding for smaller screens */
+    }
+
+    .custom-btn, .custom-back-btn {
+        width: 100%;
+        padding: 18px 20px; /* More padding for larger buttons on mobile */
+    }
+
+    .custom-input {
+        padding: 12px;
+    }
+}

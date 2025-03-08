@@ -64,3 +64,12 @@
     transition: 0.3s ease-in-out;
 }
 
+
+/* Custom background for UserDashboard */
+.user-dashboard-container {
+    background: linear-gradient(135deg, #1d1d1d, #494949); /* Modern dark gradient */
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}

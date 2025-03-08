@@ -1,0 +1,122 @@
+
+
+/* Header */
+h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #61b7cf;
+    margin-bottom: 30px;
+}
+
+/* Navigation Buttons */
+.custom-nav-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 25px;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    box-shadow: none;
+}
+
+.custom-nav-btn:hover {
+    background-color: #61b7cf;
+    color: white;
+}
+
+/* Back Button */
+.custom-back-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 25px;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-color: #6c757d;
+    color: #6c757d;
+    transition: background-color 0.3s ease;
+}
+
+.custom-back-btn:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Table */
+.custom-table {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.custom-table th, .custom-table td {
+    padding: 12px 18px;
+    text-align: center;
+}
+
+.custom-table th {
+    background-color: #61b7cf;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.custom-table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f1f9ff;
+}
+
+.custom-table tbody tr td {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Action Buttons */
+.custom-action-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    transition: transform 0.3s, background-color 0.3s ease;
+    box-shadow: none;
+}
+
+.custom-action-btn:hover {
+    background-color: #28a745;
+    color: white;
+    transform: scale(1.05);
+}
+
+.custom-action-btnr {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    transition: transform 0.3s, background-color 0.3s ease;
+    box-shadow: none;
+}
+
+.custom-action-btnr:hover {
+    background-color: #a72841;
+    color: white;
+    transform: scale(1.05);
+}
+
+.custom-action-btn:active {
+    transform: scale(0.98);
+}
+
+.custom-action-btn + .custom-action-btn {
+    margin-left: 8px;
+}
+
+/* Spinner */
+.spinner-border {
+    color: #61b7cf;
+}
+
+/* Alert */
+.alert {
+    font-size: 1rem;
+    margin-top: 20px;
+}
+

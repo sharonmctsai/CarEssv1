@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, ListGroup, Spinner, Alert, Form, Button } from 'react-bootstrap';
-import './Home.css';
-import { UserContext } from '../context/UserContext'; // Import UserContext
+import { FaPaperPlane, FaUser, FaUserShield } from 'react-icons/fa';
+import './AdminChat.css'; // New CSS file for chat styling
+import { UserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import {  FaArrowLeft} from 'react-icons/fa';
 
 function AdminChat() {
-    const { user } = useContext(UserContext); // Access the logged-in user from context
-    const userId = user?.id || JSON.parse(localStorage.getItem('user'))?.id; // Fallback to localStorage if context is not available
+    const { user } = useContext(UserContext);
+    const userId = user?.id || JSON.parse(localStorage.getItem('user'))?.id;
 
-    const [messages, setMessages] = useState([]); 
+    const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:5002/api/admin/chat')
@@ -19,31 +23,28 @@ function AdminChat() {
                 return res.json();
             })
             .then(data => {
-                setMessages(data || []);  // Ensure data is an array
+                setMessages(data || []);
                 setLoading(false);
             })
             .catch(err => {
                 console.error('Error fetching messages:', err);
                 setError(err.message);
-                setMessages([]); // Prevent undefined issues
+                setMessages([]);
                 setLoading(false);
             });
     }, []);
 
     const handleAdminReply = (e) => {
         e.preventDefault();
-
-        if (!newMessage.trim()) return; // Don't send empty messages
+        if (!newMessage.trim()) return;
 
         const adminMessage = {
-            user_id: userId,  // Store the userId to track who the admin is replying to
+            user_id: userId,
             message: newMessage,
             timestamp: new Date().toLocaleString(),
-            is_admin: true,  // Indicate this is an admin's reply
+            is_admin: true,
         };
-    console.log('Sending admin message:', adminMessage);  // Add this log
 
-        // Send the reply to the server (or add to the local state temporarily)
         fetch('http://localhost:5002/api/admin/reply', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -51,10 +52,8 @@ function AdminChat() {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log('Backend response:', data);  // Log the response from the backend
-
-                setMessages((prevMessages) => [...prevMessages, data]); // Add the new message to the state
-                setNewMessage(''); // Clear the input field
+                setMessages((prevMessages) => [...prevMessages, data]);
+                setNewMessage('');
             })
             .catch((err) => {
                 console.error('Error sending message:', err);
@@ -63,36 +62,54 @@ function AdminChat() {
     };
 
     return (
-        <Container className="my-4">
-            <h2>Admin Support Chat</h2>
+        <Container className="chat-container">
+         
+         <Button variant="secondary" onClick={() => navigate(-1)}> 
+
+<FaArrowLeft className="me-2" />
+Back
+</Button> {/* Navigate to the previous page */}
+
+            <h2 className="chat-title">Admin Support Chat</h2>
             {loading ? (
-                <Spinner animation="border" />
+                <Spinner animation="border" className="chat-spinner" />
             ) : error ? (
                 <Alert variant="danger">{error}</Alert>
             ) : (
-                <ListGroup>
-                    {messages && messages.length > 0 ? (
-                        messages.map((msg, index) => (
-                            <ListGroup.Item 
-                                key={index} 
-                                className={msg.is_admin ? 'admin-message' : 'user-message'}>
-                                <small>{msg.timestamp}:</small> {msg.is_admin ? "Admin: " : "User: "} {msg.message}
-
-                            </ListGroup.Item>
-                        ))
-                    ) : (
-                        <p>No messages yet</p>
-                    )}
-                </ListGroup>
+                <div className="chat-box">
+                    <ListGroup>
+                        {messages.length > 0 ? (
+                            messages.map((msg, index) => (
+                                <ListGroup.Item 
+                                    key={index} 
+                                    className={`chat-message ${msg.is_admin ? 'admin-message' : 'user-message'}`}
+                                >
+                                    <div className="message-content">
+                                        {msg.is_admin ? <FaUserShield className="icon" /> : <FaUser className="icon" />}
+                                        <div className="message-text">
+                                            <small className="message-time">{msg.timestamp}</small>
+                                            <p>{msg.message}</p>
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                            ))
+                        ) : (
+                            <p className="no-messages">No messages yet</p>
+                        )}
+                    </ListGroup>
+                </div>
             )}
-            <Form onSubmit={handleAdminReply} className="mt-3">
+
+            <Form onSubmit={handleAdminReply} className="chat-input">
                 <Form.Control
                     type="text"
-                    placeholder="Type your response..."
+                    placeholder="Admin typing response..."
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e) => setNewMessage(e.target.value)} className="chat-input"
                 />
-                <Button type="submit" className="mt-2">Send</Button>
+                <Button type="submit" className="send-button">
+                    <FaPaperPlane />
+                </Button>
             </Form>
         </Container>
     );

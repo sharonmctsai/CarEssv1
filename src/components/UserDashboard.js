@@ -109,7 +109,7 @@ function UserDashboard() {
 
     return (
         <div className="dashboard-container">
-                        <Container className="dashboard-content">
+<Container className="user-dashboard-container my-5">
 
           <Navbar bg="dark" variant="dark" expand="lg" className="p-3">
                 <Navbar.Brand>Welcome, {user?.name || 'Guest'}!</Navbar.Brand>

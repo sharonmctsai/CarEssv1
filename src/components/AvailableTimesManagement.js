@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { FaSyncAlt, FaArrowLeft} from 'react-icons/fa';
 
 function AvailableTimesManagement() {
   const [times, setTimes] = useState("");
@@ -44,10 +45,15 @@ function AvailableTimesManagement() {
             required
           />
         </Form.Group>
-        <Button type="submit"> 
- 
-        ↻ Update Times</Button>
-        <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button> {/* Navigate to the previous page */}
+        <Button variant="primary" type="submit" ><FaSyncAlt className="me-2" />
+        Update Time
+    </Button>
+
+        <Button variant="secondary" onClick={() => navigate(-1)}> 
+
+        <FaArrowLeft className="me-2" />
+        Back
+        </Button> {/* Navigate to the previous page */}
 
       </Form>
     </Container>

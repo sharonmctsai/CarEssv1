@@ -1,13 +1,13 @@
-// EditReservation.js
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Form, Button, Spinner } from 'react-bootstrap';
+import { Container, Form, Button, Spinner, Card } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { FaSyncAlt, FaArrowLeft } from 'react-icons/fa';
+import "./EditReservation.css"; // Add a CSS file for styling
 
 function EditReservation() {
     const { user } = useContext(UserContext);
-    const { id } = useParams(); // 從路由取得預約 ID
+    const { id } = useParams();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -19,14 +19,12 @@ function EditReservation() {
     });
     const [availableTimes, setAvailableTimes] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [serviceItems, setServiceItems] = useState([]); // Store fetched service items
+    const [serviceItems, setServiceItems] = useState([]);
 
-    // 取得舊的預約資料
     useEffect(() => {
         fetch(`http://localhost:5002/api/reservations?email=${user?.email}`)
             .then(res => res.json())
             .then(data => {
-                // 在使用者的所有預約中，找到對應 id
                 const target = data.find(r => r.id === parseInt(id));
                 if (target) {
                     setFormData({
@@ -41,8 +39,7 @@ function EditReservation() {
             .catch(err => console.error(err));
     }, [id, user?.email]);
 
-     // Fetch service items from the backend
-     useEffect(() => {
+    useEffect(() => {
         fetch(`http://localhost:5002/api/service-items`)
             .then(res => res.json())
             .then(data => {
@@ -51,8 +48,6 @@ function EditReservation() {
             .catch(err => console.error("Error fetching service items:", err));
     }, []);
 
-
-    // 動態載入可用時段
     useEffect(() => {
         if (formData.date) {
             fetch(`http://localhost:5002/api/available-times?date=${formData.date}`)
@@ -70,13 +65,10 @@ function EditReservation() {
         e.preventDefault();
         setLoading(true);
 
-            // Ensure status is set to "pending" after update
-    const updatedData = {
-        ...formData,
-        status: "pending" // Reset status after editing
-    };
-    console.log("Sending updated data:", updatedData); // Debugging: Check if status is included
-
+        const updatedData = {
+            ...formData,
+            status: "pending"
+        };
 
         try {
             const response = await fetch(`http://localhost:5002/api/update-reservation/${id}`, {
@@ -101,105 +93,100 @@ function EditReservation() {
 
     return (
         <Container className="my-5">
-            <h2 className="text-center mb-4">Edit Reservation</h2>
-            <Form onSubmit={handleUpdate}>
-                <Form.Group className="mb-3">
-                    <Form.Label>Service Type</Form.Label>
-                    <Form.Control
-                        as="select"
-                        name="service_type"
-                        value={formData.service_type}
-                        onChange={handleChange}
-                        required
-                        style={{ color: 'black' }}  
+            <Card className="p-4 shadow-lg">
+            <Form onSubmit={handleUpdate} className="edit-reservation-form">
+    <Form.Group className="mb-3">
+        <Form.Label className="service-type">Service Type</Form.Label>
+        <Form.Control
+            as="select"
+            name="service_type"
+            value={formData.service_type}
+            onChange={handleChange}
+            required
+            className="custom-input"
+        >
+            <option value="">Select a service</option>
+            {serviceItems.length === 0 ? (
+                <option>Loading...</option>
+            ) : (
+                serviceItems.map((item) => (
+                    <option key={item.id} value={item.name}>
+                        {item.name}
+                    </option>
+                ))
+            )}
+        </Form.Control>
+    </Form.Group>
 
-                    >
-                        <option value="">Select a service</option>
-                        {serviceItems.length === 0 ? (
-                            <option>Loading...</option>
-                        ) : (
-                            serviceItems.map((item) => (
-                                <option key={item.id} value={item.name}>
-                                    {item.name}
-                                </option>
-                            ))
-                        )}
-                    </Form.Control>
-                </Form.Group>
+    <Form.Group className="mb-3">
+        <Form.Label className="car-model">Car Model</Form.Label>
+        <Form.Control
+            type="text"
+            name="car_model"
+            value={formData.car_model}
+            onChange={handleChange}
+            required
+            className="custom-input"
+        />
+    </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Car Model</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="car_model"
-                        value={formData.car_model}
-                        onChange={handleChange}
-                        required
-                        style={{ color: 'black' }}  
+    <Form.Group className="mb-3">
+        <Form.Label className="license-plate">License Plate</Form.Label>
+        <Form.Control
+            type="text"
+            name="license_plate"
+            value={formData.license_plate}
+            onChange={handleChange}
+            required
+            className="custom-input"
+        />
+    </Form.Group>
 
-                    />
-                </Form.Group>
+    <Form.Group className="mb-3">
+        <Form.Label className="date">Date</Form.Label>
+        <Form.Control
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            className="custom-input"
+        />
+    </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>License Plate</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="license_plate"
-                        value={formData.license_plate}
-                        onChange={handleChange}
-                        required
-                        style={{ color: 'black' }}  
+    <Form.Group className="mb-3">
+        <Form.Label className="time">Time</Form.Label>
+        {availableTimes.length > 0 ? (
+            <Form.Control
+                as="select"
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
+                required
+                className="custom-input"
+            >
+                <option value={formData.time}>{formData.time}</option>
+                {availableTimes.map(t => (
+                    t !== formData.time && <option key={t} value={t}>{t}</option>
+                ))}
+            </Form.Control>
+        ) : (
+            <Spinner animation="border" size="sm" />
+        )}
+    </Form.Group>
 
-                    />
-                </Form.Group>
+    <Button variant="primary" type="submit" disabled={loading} className="custom-btn">
+        {loading ? <FaSyncAlt className="spinner-icon" /> : <FaSyncAlt className="me-2" />}
+        {loading ? "Updating..." : "Update Reservation"}
+    </Button>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Date</Form.Label>
-                    <Form.Control
-                        type="date"
-                        name="date"
-                        value={formData.date}
-                        onChange={handleChange}
-                        required
-                        style={{ color: 'black' }}  
+    <Button variant="secondary" onClick={() => navigate(-1)} className="custom-back-btn">
+        <FaArrowLeft className="me-2" />
+        Back
+    </Button>
+</Form>
 
-                    />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                    <Form.Label>Time</Form.Label>
-                    {availableTimes.length > 0 ? (
-                        <Form.Control
-                            as="select"
-                            name="time"
-                            value={formData.time}
-                            onChange={handleChange}
-                            required
-                            style={{ color: 'black' }}  
-
-                        >
-                            {/* 若舊的 time 已被佔用，使用者仍可保留該時段；可根據需求決定邏輯 */}
-                            <option value={formData.time}>{formData.time}</option>
-                            {availableTimes.map(t => (
-                                t !== formData.time && <option key={t} value={t}>{t}</option>
-                            ))}
-                        </Form.Control>
-                    ) : (
-                        <Spinner animation="border" size="sm" />
-                    )}
-                </Form.Group>
-
-                <Button variant="primary" type="submit" disabled={loading}>
-                {loading ? <FaSyncAlt className="spinner-icon" /> : <FaSyncAlt className="me-2" />}
-                {loading ? "Updating..." : "Update Reservation"}
-            </Button>
-
-            <Button variant="secondary" onClick={() => navigate(-1)}>
-                <FaArrowLeft className="me-2" />
-                Back
-            </Button>
-
-            </Form>
+            </Card>
         </Container>
     );
 }

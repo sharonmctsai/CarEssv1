@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Alert, Spinner, Button, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import "./AdminDB.css"; 
 
 function AdminDashboard() {
     const [reservations, setReservations] = useState([]);
@@ -46,41 +47,39 @@ function AdminDashboard() {
         }
     };
 
-    return (
+        return (
         <Container className="my-5">
-            <h2 className="text-center mb-4">Admin Dashboard</h2>
+            <h2 className="text-center mb-4 text-primary">Admin Dashboard</h2>
 
-            {/* 管理員導航區 */}
-            <Row className="mb-4">
-                <Col className="d-flex justify-content-center">
-                    <Button as={Link} to="/admin/notification-management" variant="info" className="me-2">
+            <Row className="mb-4 justify-content-center">
+                <Col>
+                    <Button as={Link} to="/admin/notification-management" variant="outline-primary" className="me-3 custom-nav-btn">
                         Notification Management
                     </Button>
-                    <Button as={Link} to="/admin/available-times" variant="info" className="me-2">
+                    <Button as={Link} to="/admin/available-times" variant="outline-primary" className="me-3 custom-nav-btn">
                         Available Times Management
                     </Button>
-                    <Button as={Link} to="/admin/data-management" variant="info">
+                    <Button as={Link} to="/admin/data-management" variant="outline-primary" className="me-3 custom-nav-btn">
                         Data Management
                     </Button>
-
-                    <Button as={Link} to="/admin/chat" variant="info">
+                    <Button as={Link} to="/admin/chat" variant="outline-primary" className="me-3 custom-nav-btn">
                         Admin Chat
                     </Button>
-                    
-                    <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button> {/* Navigate to the previous page */}
-
+                    <Button variant="outline-secondary" onClick={() => navigate(-1)} className="custom-back-btn">
+                        ← Back
+                    </Button>
                 </Col>
             </Row>
 
             {loading ? (
-                <div className="d-flex justify-content-center my-3">
+                <div className="d-flex justify-content-center my-5">
                     <Spinner animation="border" />
                 </div>
             ) : error ? (
                 <Alert variant="danger">{error}</Alert>
             ) : (
-                <Table striped bordered hover className="shadow-sm bg-white">
-                    <thead className="bg-dark text-white">
+                <Table striped bordered className="shadow-sm bg-white rounded">
+                    <thead className="bg-light text-dark">
                         <tr>
                             <th>#</th>
                             <th>User Email</th>
@@ -94,7 +93,7 @@ function AdminDashboard() {
                         </tr>
                     </thead>
                     <tbody>
-                        {Array.isArray(reservations) && reservations.length > 0 ? (
+                        {reservations.length > 0 ? (
                             reservations.map((res, index) => (
                                 <tr key={res.id}>
                                     <td>{index + 1}</td>
@@ -110,7 +109,7 @@ function AdminDashboard() {
                                             variant="outline-success"
                                             size="sm"
                                             onClick={() => handleUpdateStatus(res.id, 'Confirmed')}
-                                            className="me-2"
+                                            className="me-2 custom-action-btn"
                                         >
                                             Confirm
                                         </Button>
@@ -118,6 +117,7 @@ function AdminDashboard() {
                                             variant="outline-danger"
                                             size="sm"
                                             onClick={() => handleUpdateStatus(res.id, 'Cancelled')}
+                                            className="custom-action-btnr"
                                         >
                                             Cancel
                                         </Button>
@@ -126,9 +126,7 @@ function AdminDashboard() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="9" className="text-center">
-                                    No reservations found.
-                                </td>
+                                <td colSpan="9" className="text-center">No reservations found.</td>
                             </tr>
                         )}
                     </tbody>
@@ -137,5 +135,6 @@ function AdminDashboard() {
         </Container>
     );
 }
+
 
 export default AdminDashboard;

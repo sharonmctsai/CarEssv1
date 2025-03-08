@@ -127,8 +127,8 @@
   /* Left-side Icon (Email & Lock) */
   .icon {
     position: absolute;
-    left: 8px; /* Adjust icon position */
-    top: 50%;
+    left: 1px; /* Adjust icon position */
+    top: 70%;
     transform: translateY(-50%);
     color: #fff;
     font-size: 14px;

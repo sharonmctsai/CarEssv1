@@ -3,6 +3,7 @@ import { Container, Form, Button, ListGroup, Spinner, Alert } from 'react-bootst
 import './ChatBox.css';
 import { UserContext } from '../context/UserContext'; // Import UserContext
 import { useNavigate } from 'react-router-dom';
+import {  FaArrowLeft} from 'react-icons/fa';
 
 function ChatBox({ userId: propUserId }) {
 
@@ -81,9 +82,11 @@ function ChatBox({ userId: propUserId }) {
 
     return (
         <Container className="chat-container">
-            <Button variant="outline-light" className="back-button" onClick={() => navigate(-1)}>
-                ← Go Back
-            </Button>
+                <Button variant="secondary" onClick={() => navigate(-1)}> 
+
+<FaArrowLeft className="me-2" />
+Back
+</Button> {/* Navigate to the previous page */}
 
             <h2 className="chat-title">Chat with Support</h2>
 
@@ -108,7 +111,7 @@ function ChatBox({ userId: propUserId }) {
             <Form onSubmit={handleSendMessage} className="message-form">
                 <Form.Control
                     type="text"
-                    placeholder="Type your message..."
+                    placeholder="User typing message..."
                     className="message-input"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
