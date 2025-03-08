@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 
 .about-section {
-    background: linear-gradient(135deg, #1d1d1d, #005bff);
+    background: linear-gradient(135deg, #1d1d1d, #606060);
     color: #fff;
-    font-family: 'Orbitron', sans-serif;
+    font-family: sans-serif;
     text-align: center;
     padding: 80px 20px;
     min-height: 100vh;

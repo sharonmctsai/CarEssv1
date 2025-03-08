@@ -9,7 +9,7 @@ const About = () => {
         <div className="about-section">
             <h1>About Us</h1>
             <p>
-                Welcome to <strong>[Your Company Name]</strong>, where we provide high-quality car servicing and maintenance.
+                Welcome to <strong> CarEss</strong>, where we provide high-quality car servicing and maintenance.
                 Our goal is to keep your vehicle running smoothly with expert diagnostics, repairs, and routine checkups.
             </p>
 
@@ -33,7 +33,9 @@ const About = () => {
             <h2>Contact Us</h2>
             <p>Address : 1 AA road, Co. Dublin, Ireland</p>
             <p>Email : support@caress.com</p>
-            <p>0800-123-4567</p>
+            <p>Tel :0800-123-4567</p>            
+            <p>Time :Mon- Sat 08:00 -18:00</p>
+
             <button className="btn-back" onClick={() => navigate("/")}>Back to Home</button>
 
         </div>

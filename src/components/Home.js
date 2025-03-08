@@ -1,18 +1,32 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Navbar, Nav, Container, Button, Card, Row, Col } from 'react-bootstrap';
-import { FaCarSide, FaTools, FaBell } from 'react-icons/fa'; // using React Icons
-import './Home.css'; // create css individually for design
+import React, { useState } from 'react';
+import { Link,useLocation } from 'react-router-dom';
+import { Navbar, Nav, Container, Button, Card, Row, Col, Modal } from 'react-bootstrap';
+import { FaCarSide, FaTools, FaBell, FaWrench, FaOilCan, FaBatteryFull } from 'react-icons/fa';
+import './Home.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Home() {
-  const location = useLocation();
-  // Retrieve and parse stored user data
   const storedUser = JSON.parse(localStorage.getItem("user")) || {}; 
-  const username = storedUser.name || "Guest"; // Extract only the name
+  const username = storedUser.name || "Guest";
 
-  console.log("User:", username); // Debugging
-  
+  const [showModal, setShowModal] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const location = useLocation();
+
+  const services = [
+    { id: 1, title: "Pre And Post NCT", icon: <FaCarSide size={50} className="mb-3 icon-primary" />, description: "A Pre NCT is a vehicle check completed before a National Car Test.", price: "€50" },
+    { id: 2, title: "Car Servicing", icon: <FaTools size={50} className="mb-3 icon-primary" />, description: "We provide top-notch maintenance service for all types of vehicles.", price: "€100" },
+    { id: 3, title: "Wheel Repair", icon: <FaWrench size={50} className="mb-3 icon-primary" />, description: "Professional wheel repair services to restore your wheels to their original condition.", price: "€70" },
+    { id: 4, title: "New Tyres", icon: <FaCarSide size={50} className="mb-3 icon-primary" />, description: "We offer high-quality tyres for all vehicle types at competitive prices.", price: "€150" },
+    { id: 5, title: "Oil Change", icon: <FaOilCan size={50} className="mb-3 icon-primary" />, description: "Get an oil change to keep your engine running smoothly and efficiently.", price: "€40" },
+    { id: 6, title: "Car Battery Replacement", icon: <FaBatteryFull size={50} className="mb-3 icon-primary" />, description: "Replace your old car battery with a new, high-performance battery.", price: "€120" },
+  ];
+
+  const handleShowModal = (service) => {
+    setSelectedService(service);
+    setShowModal(true);
+  };
+
   return (
     <>
       {/* Navigation */}
@@ -24,16 +38,14 @@ function Home() {
             <Nav className="ms-auto">
               {username !== 'Guest' ? (
                 <>
-                <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
-                <Nav.Link as={Link} to="/reservation">Reservation</Nav.Link>
-                <Nav.Link as={Link} to="/about">About</Nav.Link>
-                <Nav.Link disabled style={{ color: 'white' }}>Hello, {username}</Nav.Link>
-
-                <Nav.Link as={Link} to="/" onClick={() => { localStorage.removeItem("user"); window.location.reload(); }}>
-              Logout
-                 </Nav.Link>
-
-
+                  <Nav.Link disabled style={{ color: 'yellow' }}>Hello, {username}</Nav.Link>
+                  <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
+                  <Nav.Link as={Link} to="/reservation">Reservation</Nav.Link>
+                  <Nav.Link as={Link} to="/about">About</Nav.Link>
+                  <Nav.Link as={Link} to="/chat">Chat</Nav.Link>
+                  <Nav.Link as={Link} to="/" onClick={() => { localStorage.removeItem("user"); window.location.reload(); }}>
+                    Logout
+                  </Nav.Link>
                 </>
               ) : (
                 <>
@@ -47,67 +59,76 @@ function Home() {
         </Container>
       </Navbar>
 
-      {/* Hero  */}
-      <div className="hero-section d-flex align-items-center">
-        <Container className="text-center text-white">
-          <h1 className="display-4">Welcome to CarEss</h1>
-          <p className="lead">"Booking Made Easy, Service Made Right."</p>
-          <div className="mt-4">
-            {username === 'Guest' ? (
-              <>
-                <Button variant="primary" size="lg" as={Link} to="/register" className="mx-2">
-                  Register
-                </Button>
-                <Button variant="secondary" size="lg" as={Link} to="/login" className="mx-2">
-                  Log In
-                </Button>
-              </>
-            ) : (
-              <p className="lead">Welcome back, {username}!</p>
-            )}
-          </div>
-        </Container>
-      </div>
+      {/* Hero Section */}
+      <div className="hero-section">
+  <Container className="text-center text-white">
+    <h1 className="display-4">Welcome to CarEss</h1>
+    <p className="lead">"Booking Made Easy, Service Made Right."</p>
+    <div className="mt-4">
+      {username === 'Guest' ? (
+        <>
+          <Button variant="primary" size="lg" as={Link} to="/register" className="mx-2">
+            Register
+          </Button>
+          <Button variant="secondary" size="lg" as={Link} to="/login" className="mx-2">
+            Log In
+          </Button>
+        </>
+      ) : (
+        <p className="lead">Welcome back, {username}!</p>
+      )}
+    </div>
+  </Container>
+</div>
 
-      {/* Services */}
+
+      {/* Services Section */}
       <Container className="my-5">
         <h2 className="text-center mb-4">Our Services</h2>
         <Row>
-          <Col md={4} className="mb-4">
-            <Card className="h-100 text-center">
-              <Card.Body>
-                <FaCarSide size={50} className="mb-3 text-primary" />
-                <Card.Title>Pre And Post NCT</Card.Title>
-                <Card.Text>
-                  A Pre NCT is a vehicle check completed before a National Car Test
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md={4} className="mb-4">
-            <Card className="h-100 text-center">
-              <Card.Body>
-                <FaTools size={50} className="mb-3 text-primary" />
-                <Card.Title>Car Servicing</Card.Title>
-                <Card.Text>
-                  We provide top notch maintenance service for all types of vehicles
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md={4} className="mb-4">
-            <Card className="h-100 text-center">
-              <Card.Body>
-                <FaBell size={50} className="mb-3 text-primary" />
-                <Card.Title>Schedule Service</Card.Title>
-                <Card.Text>
-                  Easily schedule your car’s service or test with just a few clicks
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
+          {services.map(service => (
+            <Col md={4} className="mb-4" key={service.id}>
+              <Card className="h-100 text-center" onClick={() => handleShowModal(service)} style={{ cursor: 'pointer' ,backgroundColor: '#747EA8'}}>
+                <Card.Body>
+                  {service.icon}
+                  <Card.Title>{service.title}</Card.Title>
+                  <Card.Text>{service.description}</Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
         </Row>
       </Container>
+
+      {/* Service Modal */}
+   {/* Stylish Service Modal */}
+<Modal 
+  show={showModal} 
+  onHide={() => setShowModal(false)} 
+  centered 
+  className="custom-modal"
+>
+  <Modal.Header closeButton className="modal-header-custom">
+    <Modal.Title>{selectedService?.title}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body className="modal-body-custom">
+    <p>{selectedService?.description}</p>
+    <h5 className="price-text">Price: <strong>{selectedService?.price}</strong></h5>
+  </Modal.Body>
+  <Modal.Footer className="modal-footer-custom">
+    <Button variant="secondary" onClick={() => setShowModal(false)} className="close-btn">
+      Close
+    </Button>
+    {storedUser?.name ? (
+      <Button variant="primary" as={Link} to="/reservation" className="book-btn">
+        Book Now
+      </Button>
+    ) : (
+      <p className="text-danger">Please log in to book a service.</p>
+    )}
+  </Modal.Footer>
+</Modal>
+
 
       {/* Footer */}
       <footer className="bg-dark text-white text-center py-3">
@@ -116,6 +137,5 @@ function Home() {
     </>
   );
 }
-
 
 export default Home;

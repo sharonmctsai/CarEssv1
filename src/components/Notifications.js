@@ -1,8 +1,9 @@
-// Notifications.js
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, ListGroup, Spinner, Alert,Button } from 'react-bootstrap';
+import { Container, ListGroup, Spinner, Alert, Button } from 'react-bootstrap';
 import { UserContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { Bell, ArrowLeft } from 'react-bootstrap-icons'; // Import icons
+import './Notifications.css'; // Custom styles
 
 function Notifications() {
   const { user } = useContext(UserContext);
@@ -11,46 +12,54 @@ function Notifications() {
   const [error, setError] = useState(null);
   const navigate = useNavigate(); 
 
+  const fetchNotifications = async () => {
+    if (!user?.email) return;
+    
+    try {
+      const response = await fetch(`http://localhost:5002/api/notifications?email=${user.email}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+      }
+      const data = await response.json();
+      setNotifications(data);
+    } catch (err) {
+      setError("Failed to load notifications");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (user?.email) {
-      fetch(`http://localhost:5002/api/notifications?email=${user.email}`)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error("Failed to fetch notifications");
-          }
-          return res.json();
-        })
-        .then(data => {
-          setNotifications(data);
-          setLoading(false);
-        })
-        .catch(err => {
-          setError('Failed to load notifications');
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 60000); // Refresh every 60 seconds
+      return () => clearInterval(interval);
     }
   }, [user]);
 
-  if (loading) return <Spinner animation="border" />;
-  if (error) return <Alert variant="danger">{error}</Alert>;
-
   return (
-    <Container className="my-5">
-            <Button variant="secondary" onClick={() => navigate(-1)}>← Back</Button> {/* Back Button */}
+    <Container className="notifications-container">
+      {/* Back Button */}
+      <Button variant="outline-light" className="back-btn" onClick={() => navigate(-1)}>
+        <ArrowLeft size={20} /> Back
+      </Button>
 
-      <h2>Notifications</h2>
-      
+      <h2 className="text-center">
+        <Bell size={30} className="bell-icon" /> Notifications
+      </h2>
+
+      {loading && <Spinner animation="border" className="loading-spinner" />}
+      {error && <Alert variant="danger">{error}</Alert>}
+
       {notifications.length === 0 ? (
-        <Alert variant="info">No notifications at the moment.</Alert>
+        <Alert variant="info" className="text-center">No notifications at the moment.</Alert>
       ) : (
-        <ListGroup>
+        <ListGroup className="notification-list">
           {notifications.map(n => (
-            <ListGroup.Item key={n.id}>
-              <strong>{n.date}</strong>: {n.message}
+            <ListGroup.Item key={n.id} className="notification-item">
+              <span className="notification-date">{new Date(n.date).toLocaleString()}</span>
+              <p className="notification-message">{n.message}</p>
             </ListGroup.Item>
-            
           ))}
         </ListGroup>
       )}

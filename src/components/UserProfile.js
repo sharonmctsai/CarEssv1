@@ -14,8 +14,9 @@ function UserProfile() {
         name: user?.name || "",
         email: user?.email || "",
         password: "",
-        profilePic: user?.profilePic || "https://via.placeholder.com/120",
     });
+    
+    
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,11 +27,12 @@ function UserProfile() {
             alert("Please enter a valid email address.");
             return;
         }
-        if (formData.password && formData.password.length < 6) {
-            alert("Password must be at least 6 characters.");
+        if (formData.password && formData.password.length < 4) {
+            alert("Password must be at least 4 characters.");
             return;
         }
    
+        
         // Simulate an API call (Replace with backend logic)
         const updatedUser = { ...user, name: formData.name, email: formData.email };
         if (formData.password) {
@@ -48,7 +50,6 @@ function UserProfile() {
         <div className="profile-container">
             <Container>
                 <Card className="profile-card">
-                    <img src={formData.profilePic} alt="Profile" className="profile-img" />
                     
                     {isEditing ? (
                         <>

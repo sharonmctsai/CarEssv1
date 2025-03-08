@@ -7,12 +7,33 @@ from werkzeug.security import generate_password_hash
 from flask_cors import cross_origin
 
 
-app = Flask(__name__)  # initialize the Flask app
+app = Flask(__name__)
+
 auth = Blueprint('auth', __name__)
+
 
 # -----------------------------
 # Replace with your Google OAuth client ID
 GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"
+
+@app.route("/api/update-profile", methods=["PUT"])
+def update_profile():
+    data = request.json
+    user = User.query.filter_by(email=data["email"]).first()  # Find user by email
+
+    if user:
+        user.name = data["name"]  # ✅ Update username
+        if data["password"]:
+            user.password = hash_password(data["password"])  # Hash new password
+        
+        db.session.commit()  # ✅ Save changes to the database
+        return jsonify({"message": "Profile updated", "name": user.name, "email": user.email}), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+
+    
+    return jsonify(updated_user), 200
 
 @auth.route('/api/chat', methods=['POST'])
 def send_message():
@@ -161,7 +182,9 @@ def login():
                 "message": "Login successful",
                 "is_admin": user.is_admin,
                 "name": user.name,
-                "id": user.id
+                "id": user.id,
+                 "email": user.email
+
                 }), 200
 
         return jsonify({"error": "Invalid email or password"}), 401
@@ -276,6 +299,11 @@ def reserve():
         time_str = data.get('time')
         car_model = data.get('car_model')
         license_plate = data.get('license_plate')
+
+
+        if not all([service_type, user_email, date_str, time_str, car_model, license_plate]):
+            return jsonify({"error": "Missing required fields"}), 400
+
         date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
         time_obj = datetime.strptime(time_str, "%H:%M").time()
         new_reservation = Reservation(
@@ -288,6 +316,14 @@ def reserve():
         )
         db.session.add(new_reservation)
         db.session.commit()
+
+                # Send an email confirmation
+        confirmation_message = (
+            f"Your reservation for {service_type} on {date_str} at {time_str} "
+            f"has been confirmed. Car Model: {car_model}, License Plate: {license_plate}."
+        )
+        send_email_notification(user_email, confirmation_message)
+
         return jsonify({"message": "Reservation created successfully"}), 201
     except Exception as e:
         print(f"Error occurred: {e}")
@@ -402,10 +438,24 @@ def get_notifications():
                 "message": message,
                 "date": res.date.strftime('%Y-%m-%d')
             })
+               # Send an email reminder
+            send_email_notification(email, message)
+
         return jsonify(notifications), 200
     except Exception as e:
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
+
+def send_email_notification(email, message):
+    """Sends an email reminder to the user."""
+    try:
+        msg = Message("Booking Reminder", recipients=[email])
+        msg.body = message
+        mail.send(msg)
+        print(f"Reminder email sent to {email}")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
 
 # -----------------------------
 # 資料管理 – 客戶管理

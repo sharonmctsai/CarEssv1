@@ -7,7 +7,7 @@ import './Login.css';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
-const GOOGLE_CLIENT_ID = "563323757566-h08eu7gboig2s82slulk703lnhdq226s.apps.googleusercontent.com"; // Replace with actual client ID
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 
 function Login() {
@@ -35,6 +35,8 @@ function Login() {
     };
 
 
+
+    
     const togglePasswordVisibility = () => {
         setShowPassword((prev) => !prev);
     };
@@ -83,12 +85,16 @@ function Login() {
                 setUser({ id: result.id, name: result.name, email: formData.email }); // Include userId in the user state
     
                 toast.success('Login successful!', { autoClose: 2000 });
-    
-                // Navigate to user dashboard
-                navigate('/dashboard', { state: { user: result.name } });
+
+                if (result.is_admin) {
+                    // If user is an admin, navigate to admin dashboard
+                    navigate('/admin-dashboard');
+                } else {
+                    // Otherwise, navigate to the regular dashboard
+                    navigate('/dashboard', { state: { user: result.name } });
+                }
             } else {
                 const error = await response.json();
-                console.log("Login Error:", error);  // <-- ADD THIS TO CHECK ERROR RESPONSE
                 toast.error(error.error, { autoClose: 3000 });
             }
         } catch (error) {
@@ -96,6 +102,7 @@ function Login() {
             toast.error('Network error. Please try again.', { autoClose: 3000 });
         }
     };
+    
     const fetchUserData = async () => {
         const response = await fetch("http://localhost:5002/api/user/profile");
         const userData = await response.json();

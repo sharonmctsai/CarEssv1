@@ -1,18 +1,22 @@
 /* Importing Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 
+
+
 /* Hero Section */
 .hero-section {
   background: linear-gradient(135deg, #1d1d1d, #005bff); /* Futuristic gradient background */
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
+
+  background: url('/public/car.jpg') no-repeat center center/cover;
+  
+  height: 60vh; /* Full screen height */
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  color: #fff;
+  color: white;
+  text-align: center;
   font-family: 'Orbitron', sans-serif; /* Futuristic font */
+  z-index: 1; /* Make sure the hero section stays below the navbar *
 }
 
 .hero-section::before {
@@ -37,7 +41,7 @@
 }
 
 .hero-section .lead {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   text-shadow: 0 0 10px rgba(0, 255, 255, 0.8); /* Subtle glowing */
 }
 
@@ -76,7 +80,7 @@ h2.text-center {
 .card {
   border: none;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  background: #1c1c1c;
+  background: #302d2d;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
   border-radius: 15px;
 }
@@ -205,4 +209,68 @@ footer p {
   .card-text {
     font-size: 0.9rem;
   }
+}
+.navbar-dark .nav-link.disabled {
+  color: rgb(0, 255, 217) !important;
+  opacity: 1 !important;
+}
+/* Custom Modal Styling */
+.custom-modal .modal-content {
+  background: linear-gradient(135deg, #6BA8A9, #758184); /* Futuristic Gradient */
+  border-radius: 15px;
+  color: #ffffff;
+  box-shadow: 0px 4px 20px rgba(0, 91, 255, 0.5);
+  border: none;
+}
+
+/* Header Styling */
+.modal-header-custom {
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: none;
+  color: #fff;
+}
+
+/* Modal Body */
+.modal-body-custom {
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 20px;
+}
+
+/* Price Text */
+.price-text {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #FEAD34;
+}
+
+/* Footer Styling */
+.modal-footer-custom {
+  border-top: none;
+  justify-content: center;
+  padding: 15px;
+}
+
+/* Close Button */
+.close-btn {
+  background-color: #F65C78;
+  border: none;
+  padding: 10px 20px;
+  transition: 0.3s ease-in-out;
+}
+
+.close-btn:hover {
+  background-color: #F39499;
+}
+
+/* Book Now Button */
+.book-btn {
+  background-color: #6AB68E;
+  border: none;
+  padding: 10px 20px;
+  transition: 0.3s ease-in-out;
+}
+
+.book-btn:hover {
+  background-color: #CEF4E0;
 }

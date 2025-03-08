@@ -188,16 +188,17 @@ function Reservation() {
                     <Form.Group className="mb-3">
                         <Form.Label>Time</Form.Label>
                         {availableTimes.length > 0 ? (
-                              <Form.Group>
-                              <TimeDropdownComponent
-                                  selectedTime={formData.time}
-                                  setSelectedTime={(time) => setFormData({ ...formData, time })}
-                                  availableTimes={availableTimes}
-                              />
-                          </Form.Group>
-                        ) : (
-                            <Spinner animation="border" size="sm" />
-                        )}
+                        <TimeDropdownComponent
+                            selectedTime={formData.time}
+                            setSelectedTime={(time) => setFormData({ ...formData, time })}
+                            availableTimes={availableTimes}
+                        />
+                    ) : availableTimes.length === 0 && formData.date ? (
+                        <p className="text-danger">No available time slots for this date.</p>
+                    ) : (
+                        <Spinner animation="border" size="sm" />
+                    )}
+
                     </Form.Group>
                     <Button variant="primary" type="submit" disabled={!formData.time} className="w-100">
   {loading ? "Submitting..." : "Submit Reservation"}

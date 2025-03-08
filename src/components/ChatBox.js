@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Container, Form, Button, ListGroup, Spinner, Alert } from 'react-bootstrap';
-import './Home.css';
+import './ChatBox.css';
 import { UserContext } from '../context/UserContext'; // Import UserContext
+import { useNavigate } from 'react-router-dom';
 
 function ChatBox({ userId: propUserId }) {
 
     // Use context if propUserId is not provided
     const { user } = useContext(UserContext); 
     const userId = propUserId || user?.id || JSON.parse(localStorage.getItem('user'))?.id;
+    const navigate = useNavigate();
 
     console.log('User ID:', userId); // Debugging
 
@@ -78,33 +80,40 @@ function ChatBox({ userId: propUserId }) {
     };
 
     return (
-        <Container className="my-4">
-            <h2>Chat with Support</h2>
+        <Container className="chat-container">
+            <Button variant="outline-light" className="back-button" onClick={() => navigate(-1)}>
+                ← Go Back
+            </Button>
+
+            <h2 className="chat-title">Chat with Support</h2>
+
             {loading ? (
-                <Spinner animation="border" />
+                <Spinner animation="border" variant="light" />
             ) : error ? (
                 <Alert variant="danger">{error}</Alert>
             ) : (
-                <ListGroup>
+                <ListGroup className="chat-messages">
                     {messages.map((msg) => (
                         <ListGroup.Item
-                            key={msg.id} // Use a unique key (e.g., message ID)
+                            key={msg.id}
                             className={msg.is_admin ? "admin-message" : "user-message"}
                         >
-                            <small>{new Date(msg.timestamp).toLocaleString()}</small>: {msg.message}
+                            <small>{new Date(msg.timestamp).toLocaleString()}</small>  
+                            <p>{msg.message}</p>
                         </ListGroup.Item>
                     ))}
                 </ListGroup>
             )}
-            <Form onSubmit={handleSendMessage} className="mt-3">
+
+            <Form onSubmit={handleSendMessage} className="message-form">
                 <Form.Control
                     type="text"
                     placeholder="Type your message..."
-                    style={{ color: 'black' }}
+                    className="message-input"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <Button type="submit" className="mt-2">Send</Button>
+                <Button type="submit" className="send-button">Send</Button>
             </Form>
         </Container>
     );

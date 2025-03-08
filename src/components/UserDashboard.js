@@ -78,11 +78,16 @@ function UserDashboard() {
             .catch(() => alert('Network error. Please try again.'));
     };
 
+  
     const handleLogout = () => {
-        localStorage.removeItem('user');
+        // Clear user from context and localStorage
         setUser(null);
-        navigate('/login');
+        localStorage.removeItem("user");
+        // Redirect to login page
+        navigate("/login");
     };
+    
+    
      // 取得「未來或當天」的預約紀錄（history=0）
      useEffect(() => {
         if (user?.email) {
@@ -110,7 +115,7 @@ function UserDashboard() {
                 <Navbar.Brand>Welcome, {user?.name || 'Guest'}!</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="ms-auto">
+                    <Nav className="me-auto">
                         <Button as={Link} to="/reservation" variant="outline-success" className="neon-profile">
                             <FaCalendarCheck className="me-1" /> Reserve
                         </Button>
