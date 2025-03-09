@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link,useLocation } from 'react-router-dom';
 import { Navbar, Nav, Container, Button, Card, Row, Col, Modal } from 'react-bootstrap';
-import { FaCarSide, FaTools, FaBell, FaWrench, FaOilCan, FaBatteryFull } from 'react-icons/fa';
+import { FaCarSide, FaTools, FaRoad, FaTachometerAlt, FaOilCan, FaBatteryFull, FaPaintBrush, FaTint,FaCog } from 'react-icons/fa';
 import './Home.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -14,12 +14,16 @@ function Home() {
   const location = useLocation();
 
   const services = [
-    { id: 1, title: "Pre And Post NCT", icon: <FaCarSide size={50} className="mb-3 icon-primary" />, description: "A Pre NCT is a vehicle check completed before a National Car Test.", price: "€50" },
+    { id: 1, title: "Pre And Post NCT", icon: <FaRoad size={50} className="mb-3 icon-primary" />, description: "A Pre NCT is a vehicle check completed before a National Car Test.", price: "€50" },
     { id: 2, title: "Car Servicing", icon: <FaTools size={50} className="mb-3 icon-primary" />, description: "We provide top-notch maintenance service for all types of vehicles.", price: "€100" },
-    { id: 3, title: "Wheel Repair", icon: <FaWrench size={50} className="mb-3 icon-primary" />, description: "Professional wheel repair services to restore your wheels to their original condition.", price: "€70" },
+    { id: 3, title: "Wheel Repair", icon: <FaCog size={50} className="mb-3 icon-primary" />, description: "Professional wheel repair services to restore your wheels to their original condition.", price: "€70" },
     { id: 4, title: "New Tyres", icon: <FaCarSide size={50} className="mb-3 icon-primary" />, description: "We offer high-quality tyres for all vehicle types at competitive prices.", price: "€150" },
     { id: 5, title: "Oil Change", icon: <FaOilCan size={50} className="mb-3 icon-primary" />, description: "Get an oil change to keep your engine running smoothly and efficiently.", price: "€40" },
     { id: 6, title: "Car Battery Replacement", icon: <FaBatteryFull size={50} className="mb-3 icon-primary" />, description: "Replace your old car battery with a new, high-performance battery.", price: "€120" },
+    { id: 7, title: "Spray Painting", icon: <FaPaintBrush size={50} className="mb-3 icon-primary" />, description: "Professional spray painting services to restore your car’s paint finish.", price: "€150" },
+    { id: 8, title: "Brake Fluid Change", icon: <FaTint size={50} className="mb-3 icon-primary" />, description: "We change brake fluid to maintain braking efficiency and safety.", price: "€60" },
+    { id: 9, title: "Clutch Replacement", icon: <FaTachometerAlt size={50} className="mb-3 icon-primary" />, description: "Complete clutch replacement to ensure smooth gear shifting.", price: "€300" },
+
   ];
 
   const handleShowModal = (service) => {
@@ -41,7 +45,6 @@ function Home() {
                   <Nav.Link disabled style={{ color: 'yellow' }}>Hello, {username}</Nav.Link>
                   <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
                   <Nav.Link as={Link} to="/reservation">Reservation</Nav.Link>
-                  <Nav.Link as={Link} to="/about">About</Nav.Link>
                   <Nav.Link as={Link} to="/chat">Chat</Nav.Link>
                   <Nav.Link as={Link} to="/" onClick={() => { localStorage.removeItem("user"); window.location.reload(); }}>
                     Logout
@@ -49,6 +52,7 @@ function Home() {
                 </>
               ) : (
                 <>
+                  <Nav.Link as={Link} to="/about">About/ Contact</Nav.Link>
                   <Nav.Link as={Link} to="/register">Register</Nav.Link>
                   <Nav.Link as={Link} to="/login">Log In</Nav.Link>
                   <Nav.Link as={Link} to="/admin-login">Admin</Nav.Link>
@@ -124,7 +128,7 @@ function Home() {
         Book Now
       </Button>
     ) : (
-      <p className="text-danger">Please log in to book a service.</p>
+      <p className="log-text">Please log in to book a service.</p>
     )}
   </Modal.Footer>
 </Modal>

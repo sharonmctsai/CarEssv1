@@ -245,6 +245,11 @@ footer p {
   color: #FEAD34;
 }
 
+.log-text {
+  font-size: 1.3rem;
+  color: #305dbd;
+}
+
 /* Footer Styling */
 .modal-footer-custom {
   border-top: none;

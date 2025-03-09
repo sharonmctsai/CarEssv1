@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./About.css"; // Add a CSS file for styling
+import { FaInstagram, FaFacebook } from 'react-icons/fa'; // Import the icons
 
 const About = () => {
     const navigate = useNavigate();
@@ -35,6 +36,20 @@ const About = () => {
             <p>Email : support@caress.com</p>
             <p>Tel :0800-123-4567</p>            
             <p>Time :Mon- Sat 08:00 -18:00</p>
+
+            <h2>Follow Us</h2>
+            <p>
+                Stay connected with us on social media:
+                <br />
+                <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                    <FaInstagram size={30} /> {/* Instagram Icon */}
+                </a>
+                &nbsp;|&nbsp;
+                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+                    <FaFacebook size={30} /> {/* Facebook Icon */}
+                </a>
+            </p>
+
 
             <button className="btn-back" onClick={() => navigate("/")}>Back to Home</button>
 
