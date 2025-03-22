@@ -28,6 +28,9 @@ class Reservation(db.Model):
 
     car_model = db.Column(db.String(80), nullable=True)
     license_plate = db.Column(db.String(80), nullable=True)
+
+
+
 class ServiceItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)

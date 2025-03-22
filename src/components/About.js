@@ -30,29 +30,56 @@ const About = () => {
                 gets the best care possible.
             </p>
 
-
             <h2>Contact Us</h2>
-            <p>Address : 1 AA road, Co. Dublin, Ireland</p>
-            <p>Email : support@caress.com</p>
-            <p>Tel :0800-123-4567</p>            
-            <p>Time :Mon- Sat 08:00 -18:00</p>
+            <p><strong>Address:</strong> Cork Rd, Kilbarry, Waterford, Ireland</p>
+            <p><strong>Email:</strong> support@caress.com</p>
+            <p><strong>Tel:</strong> 0800-123-4567</p>            
+            <p><strong>Time:</strong> Mon-Sat 08:00 - 18:00</p>
+
+            {/* Google Map Embed */}
+            <div className="map-container">
+    <iframe
+        title="SETU Waterford Location"
+        width="100%"
+        height="300"
+        style={{ border: 0, borderRadius: "10px" }}
+        loading="lazy"
+        allowFullScreen
+        referrerPolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2381.1382878293696!2d-7.137318123303369!3d52.24544377191202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4842c41e4b5fa3ff%3A0x8c39602f5c5a27d7!2sSETU%20Waterford!5e0!3m2!1sen!2sie!4v1710000000000"
+    ></iframe>
+</div>
+
+
+
+            {/* Google Review Link */}
+            <h2>Leave a Review</h2>
+            <p>
+                We value your feedback! Click below to leave us a review on Google.
+            </p>
+            <a
+                href="https://search.google.com/local/writereview?placeid=ChIJMUHdEBPEQkgR_nw_8dzwQkA"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="review-button"
+            >
+                Leave a Review ⭐
+            </a>
 
             <h2>Follow Us</h2>
             <p>
                 Stay connected with us on social media:
                 <br />
                 <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-                    <FaInstagram size={30} /> {/* Instagram Icon */}
+                    <FaInstagram size={30} />
                 </a>
                 &nbsp;|&nbsp;
                 <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
-                    <FaFacebook size={30} /> {/* Facebook Icon */}
+                    <FaFacebook size={30} />
                 </a>
             </p>
 
-
             <button className="btn-back" onClick={() => navigate("/")}>Back to Home</button>
-
         </div>
     );
 };
