@@ -14,6 +14,8 @@ auth = Blueprint('auth', __name__)
 # Replace with your Google OAuth client ID
 GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"
 
+
+
 @app.route("/api/update-profile", methods=["PUT"])
 def update_profile():
     data = request.json

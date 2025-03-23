@@ -23,7 +23,7 @@ def upgrade():
                existing_type=sa.VARCHAR(),
                type_=sa.Text(),
                existing_nullable=False)
-        batch_op.create_foreign_key(None, 'user', ['user_id'], ['id'])
+        batch_op.create_foreign_key('fk_chat_user_id', 'user', ['user_id'], ['id'])
         batch_op.drop_column('reply')
 
     with op.batch_alter_table('user', schema=None) as batch_op:

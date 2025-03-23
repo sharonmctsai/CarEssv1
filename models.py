@@ -28,6 +28,7 @@ class Reservation(db.Model):
 
     car_model = db.Column(db.String(80), nullable=True)
     license_plate = db.Column(db.String(80), nullable=True)
+    reminder_sent = db.Column(db.Boolean, default=False)  # Track if reminder has been sent
 
 
 
