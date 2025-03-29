@@ -13,14 +13,30 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
+import json
 
 # Load environment variables from the .env file
 load_dotenv()
 
 # Initialize Firebase
-cred = credentials.Certificate("/Users/sharon/Desktop/CarEss b/firebase-credentials.json")
+
+firebase_config = {
+    "type": os.getenv("FIREBASE_TYPE"),
+    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),  # Fix newlines
+    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+    "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+    "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
+    "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_CERT_URL"),
+    "client_x509_cert_url": os.getenv("FIREBASE_CLIENT_CERT_URL")
+}
+
+cred = credentials.Certificate(firebase_config)  # Load from dict instead of file
 firebase_admin.initialize_app(cred)
-firebase_db = firestore.client()  # Use a different variable name
+firebase_db = firestore.client()
+
 
 # Create Flask app
 app = Flask(__name__)
@@ -111,7 +127,7 @@ def check_and_send_reminders():
             print(f"Error in reminder task: {str(e)}")
 
 
-# Schedule the task to run every day at 8:00 AM
+# Schedule the task to run every day at 6:00 AM
 scheduler.add_job(
     func=check_and_send_reminders,
     trigger='cron',
@@ -137,7 +153,7 @@ def send_confirmation_email(user_email, reservation):
     try:
         # Create the email message
         message = Mail(
-            from_email='sharonmctsai@gmail.com',  # Replace with your sender email
+            from_email='sharonmctsai@gmail.com', 
             to_emails='sharonmctsai@gmail.com',  # User's email
             subject='CareEss : Booking Confirmation 📅',
             html_content=f'''
@@ -160,7 +176,7 @@ def send_confirmation_email(user_email, reservation):
         )
 
         # Initialize SendGrid client
-        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))  # Ensure you have the API key in your .env file
+        sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))  # API key in .env file
         response = sg.send(message)
 
         # Log the response
@@ -194,7 +210,7 @@ def confirm_booking(reservation_id):
     
 
 
-# Initialize the database and create tables if needed
+# Initialize the database
 with app.app_context():
     test_reservation = Reservation(
         user_email="sharonmctsai@gmail.com",

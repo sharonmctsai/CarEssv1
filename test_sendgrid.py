@@ -34,6 +34,8 @@ def send_email_notification(email, message):
         print(f"Failed to send email: {e}")
         return False
 
+
+
 # Test the function
 if __name__ == '__main__':
     if send_email_notification("sharonmctsai@gmail.com", "This is a test email from SendGrid!"):

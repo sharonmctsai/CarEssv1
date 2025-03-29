@@ -34,7 +34,7 @@ const About = () => {
             <p><strong>Address:</strong> Cork Rd, Kilbarry, Waterford, Ireland</p>
             <p><strong>Email:</strong> support@caress.com</p>
             <p><strong>Tel:</strong> 0800-123-4567</p>            
-            <p><strong>Time:</strong> Mon-Sat 08:00 - 18:00</p>
+            <p><strong>Time:</strong> Mon-Sun 08:00 - 18:00</p>
 
             {/* Google Map Embed */}
             <div className="map-container">
