@@ -11,7 +11,7 @@ function AvailableTimesManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // 例如輸入 "08:00,09:00,10:00"
+    // example "08:00,09:00,10:00"
     const timesArray = times.split(',').map(t => t.trim());
     try {
       const response = await fetch('http://localhost:5002/api/update-available-times', {

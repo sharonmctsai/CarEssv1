@@ -88,7 +88,7 @@ function UserDashboard() {
     };
     
     
-     // 取得「未來或當天」的預約紀錄（history=0）
+     // same day records（history=0）
      useEffect(() => {
         if (user?.email) {
             fetch(`http://localhost:5002/api/reservations?email=${user.email}&history=0`)

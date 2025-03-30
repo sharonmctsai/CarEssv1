@@ -11,7 +11,7 @@ function DataManagement() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate(); 
 
-  // 取得客戶資料
+  // get user details
   useEffect(() => {
     fetch('http://localhost:5002/api/customers')
       .then(res => res.json())
@@ -19,7 +19,7 @@ function DataManagement() {
       .catch(err => console.error(err));
   }, []);
 
-  // 取得服務項目資料
+  // get service details
   useEffect(() => {
     fetch('http://localhost:5002/api/service-items')
       .then(res => res.json())
@@ -60,7 +60,7 @@ function DataManagement() {
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message);
-        // 重新讀取服務項目列表
+        // fetch and read service items
         fetch('http://localhost:5002/api/service-items')
           .then(res => res.json())
           .then(data => setServiceItems(data));

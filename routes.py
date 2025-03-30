@@ -147,8 +147,6 @@ def cancel_reservation(id):
     else:
         return jsonify({"error": "Reservation not found"}), 404
 
-
-# 用戶註冊
 @auth.route('/api/register', methods=['POST'])
 def register():
     try:
@@ -167,8 +165,7 @@ def register():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-# -----------------------------
-# 用戶登入
+
 @auth.route('/api/login', methods=['POST'])
 def login():
     try:
@@ -227,8 +224,6 @@ def get_reservation_history():
     return jsonify(history_list), 200
 
 
-# -----------------------------
-# 查詢使用者預約（分未來預約與歷史預約）
 @auth.route('/api/reservations', methods=['GET'])
 def get_reservations():
     try:
@@ -252,8 +247,7 @@ def get_reservations():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-# -----------------------------
-# 查詢可用時段（使用全域 AVAILABLE_TIMES）
+
 AVAILABLE_TIMES = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00","16:00","17:00"]
 
 @auth.route('/api/available-times', methods=['GET'])
@@ -287,8 +281,6 @@ def update_available_times():
         print(e)
         return jsonify({"error": "Internal Server Error"}), 500
 
-# -----------------------------
-# 建立預約（含車輛資訊）
 @auth.route('/api/reserve', methods=['POST'])
 def reserve():
     try:
@@ -331,8 +323,6 @@ def reserve():
 
 
 
-# -----------------------------
-# 管理員查詢所有預約
 @auth.route('/api/all-reservations', methods=['GET'])
 def get_all_reservations():
     try:
@@ -351,8 +341,7 @@ def get_all_reservations():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-# -----------------------------
-# 更新預約（使用者可修改預約內容）
+
 @auth.route('/api/update-reservation/<int:id>', methods=['PUT', 'OPTIONS'])
 @cross_origin()
 
@@ -381,8 +370,7 @@ def update_reservation(id):
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-# -----------------------------
-# 管理員更新預約狀態
+
 @auth.route('/api/update-reservation-status', methods=['POST'])
 def update_reservation_status():
     try:
@@ -399,8 +387,7 @@ def update_reservation_status():
         print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
 
-# -----------------------------
-# 更新通知設定（提醒頻率）
+
 REMINDER_FREQUENCY = "daily"
 
 @auth.route('/api/update-notification-settings', methods=['POST'])
@@ -415,8 +402,7 @@ def update_notification_settings():
         print(e)
         return jsonify({"error": "Internal Server Error"}), 500
 
-# -----------------------------
-# 動態產生通知：根據使用者在未來 24 小時內的預約產生提醒
+]
 @auth.route('/api/notifications', methods=['GET'])
 def get_notifications():
     try:
@@ -457,8 +443,7 @@ def send_email_notification(email, message):
         print(f"Failed to send email: {e}")
 
 
-# -----------------------------
-# 資料管理 – 客戶管理
+
 @auth.route('/api/customers', methods=['GET'])
 def get_customers():
     try:
@@ -485,8 +470,7 @@ def delete_customer(id):
         print(e)
         return jsonify({"error": "Internal Server Error"}), 500
 
-# -----------------------------
-# 服務項目管理
+
 @auth.route('/api/service-items', methods=['GET'])
 def get_service_items():
     try:
@@ -525,43 +509,4 @@ def delete_service_item(id):
         return jsonify({"error": "Service item not found"}), 404
     except Exception as e:
         print(e)
-        return jsonify({"error": "Internal Server Error"}), 500
-
-# -----------------------------
-# (選擇性) 產生 Demo 資料
-@auth.route('/api/seed', methods=['POST'])
-def seed_data():
-    try:
-        if not User.query.filter_by(email="demo1@example.com").first():
-            user1 = User(name="Demo User1", email="demo1@example.com")
-            user1.set_password("123456")
-            db.session.add(user1)
-        if not User.query.filter_by(email="demo2@example.com").first():
-            user2 = User(name="Demo User2", email="demo2@example.com")
-            user2.set_password("123456")
-            db.session.add(user2)
-        if not Reservation.query.all():
-            r1 = Reservation(
-                user_email="demo1@example.com",
-                service_type="Pre NCT",
-                date=datetime(2023, 12, 1).date(),
-                time=datetime.strptime("09:00", "%H:%M").time(),
-                status="Pending",
-                car_model="Toyota Corolla",
-                license_plate="ABC-123"
-            )
-            r2 = Reservation(
-                user_email="demo2@example.com",
-                service_type="Car Servicing",
-                date=datetime(2023, 11, 28).date(),
-                time=datetime.strptime("13:00", "%H:%M").time(),
-                status="Pending",
-                car_model="Honda Civic",
-                license_plate="XYZ-789"
-            )
-            db.session.add_all([r1, r2])
-        db.session.commit()
-        return jsonify({"message": "Demo data created successfully"}), 201
-    except Exception as e:
-        print(f"Error occurred: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
