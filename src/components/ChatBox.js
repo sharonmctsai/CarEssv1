@@ -1,122 +1,110 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Container, Form, Button, ListGroup, Spinner, Alert } from 'react-bootstrap';
+import { Container, ListGroup, Form, Button, Spinner, Alert } from 'react-bootstrap';
+import { FaPaperPlane, FaUser, FaUserShield } from 'react-icons/fa';
 import './ChatBox.css';
-import { UserContext } from '../context/UserContext'; // Import UserContext
-import { useNavigate } from 'react-router-dom';
-import {  FaArrowLeft} from 'react-icons/fa';
+import { UserContext } from '../context/UserContext'; // Assuming you are using a context to get the user
+import { db } from '../firebase'; // Firebase configuration
+import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 
-function ChatBox({ userId: propUserId }) {
-
-    // Use context if propUserId is not provided
-    const { user } = useContext(UserContext); 
-    const userId = propUserId || user?.id || JSON.parse(localStorage.getItem('user'))?.id;
-    const navigate = useNavigate();
-
-    console.log('User ID:', userId); // Debugging
+function ChatBox() {
+    const { user } = useContext(UserContext);  // Assuming you're using a context to get the logged-in user
+    const userId = user?.id || JSON.parse(localStorage.getItem('user'))?.id;
 
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Fetch messages for the logged-in user
     useEffect(() => {
-        if (!userId) {
-            setError('User ID is missing. Please log in.'); // Handle missing userId
+        // Firestore query to listen for changes to the messages collection
+        const messagesRef = collection(db, 'chats');
+        const q = query(messagesRef, orderBy('timestamp', 'asc'));
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const messagesData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setMessages(messagesData);
             setLoading(false);
-            return;
-        }
+        }, (err) => {
+            console.error('Error fetching messages:', err);
+            setError('Failed to load messages.');
+            setLoading(false);
+        });
 
-        const fetchMessages = async () => {
-            try {
-                const response = await fetch(`http://localhost:5002/api/chat/${userId}`);
-                if (!response.ok) throw new Error('Failed to load messages');
-                const data = await response.json();
-                console.log('Fetched messages:', data); // Debugging
-                setMessages(data); // Update state with fetched messages
-            } catch (err) {
-                console.error('Error fetching messages:', err); // Debugging
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchMessages();
-    }, [userId]); // Re-fetch when userId changes
+        // Cleanup the listener when the component is unmounted
+        return () => unsubscribe();
+    }, []);
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (newMessage.trim() === '') return;
 
-        if (!userId) {
-            setError('User ID is missing. Please log in.'); // Handle missing userId
-            return;
-        }
+        if (!newMessage.trim()) return;
+
+        const messageData = {
+            user_id: userId,
+            message: newMessage,
+            is_admin: false,  // Set to false as this is a user message
+            timestamp: new Date(),
+        };
 
         try {
-            const payload = { user_id: userId, message: newMessage };
-            console.log('Sending payload:', payload); // Debugging
-
-            const response = await fetch('http://localhost:5002/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-
-            console.log('Response status:', response.status); // Debugging
-            const responseBody = await response.json();
-            console.log('Response body:', responseBody); // Debugging
-
-            if (response.ok) {
-                setMessages((prevMessages) => [...prevMessages, responseBody]);
-                setNewMessage('');
-            } else {
-                throw new Error(responseBody.error || 'Failed to send message');
-            }
-        } catch (error) {
-            console.error('Error sending message:', error);
+            // Add the message to Firestore
+            await addDoc(collection(db, 'chats'), messageData);
+            setNewMessage('');
+        } catch (err) {
+            console.error('Error sending message:', err);
             setError('Failed to send message. Please try again.');
         }
     };
 
     return (
         <Container className="chat-container">
-                <Button variant="secondary" onClick={() => navigate(-1)}> 
-
-<FaArrowLeft className="me-2" />
-Back
-</Button> {/* Navigate to the previous page */}
-
-            <h2 className="chat-title">Chat with Support</h2>
+            <h2 className="chat-title">User Support Chat</h2>
 
             {loading ? (
-                <Spinner animation="border" variant="light" />
+                <Spinner animation="border" className="chat-spinner" />
             ) : error ? (
                 <Alert variant="danger">{error}</Alert>
             ) : (
-                <ListGroup className="chat-messages">
-                    {messages.map((msg) => (
-                        <ListGroup.Item
-                            key={msg.id}
-                            className={msg.is_admin ? "admin-message" : "user-message"}
-                        >
-                            <small>{new Date(msg.timestamp).toLocaleString()}</small>  
-                            <p>{msg.message}</p>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
+                <div className="chat-box">
+                    <ListGroup>
+                        {messages.length > 0 ? (
+                            messages.map((msg) => (
+                                <ListGroup.Item
+                                    key={msg.id}
+                                    className={`chat-message ${msg.is_admin ? 'admin-message' : 'user-message'}`}
+                                >
+                                    <div className="message-content">
+                                        {msg.is_admin ? <FaUserShield className="icon" /> : <FaUser className="icon" />}
+                                        <div className="message-text">
+                                            <small className="message-time">{new Date(msg.timestamp?.seconds * 1000).toLocaleString()}</small>
+                                            <p>{msg.message}</p>
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
+                            ))
+                        ) : (
+                            <p className="no-messages">No messages yet</p>
+                        )}
+                    </ListGroup>
+                </div>
             )}
 
-            <Form onSubmit={handleSendMessage} className="message-form">
+            <Form onSubmit={handleSendMessage} className="chat-input">
                 <Form.Control
                     type="text"
-                    placeholder="User typing message..."
-                    className="message-input"
+                    placeholder="Type your query..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    className="chat-input-field"
+                    
+                    
                 />
-                <Button type="submit" className="send-button">Send</Button>
+                <Button type="submit" className="send-button">
+                    <FaPaperPlane />
+                </Button>
             </Form>
         </Container>
     );

@@ -35,26 +35,28 @@ def update_profile():
     
     return jsonify(updated_user), 200
 
-@auth.route('/api/chat', methods=['POST'])
+@app.route('/api/chat', methods=['POST'])
 def send_message():
-    data = request.get_json()
-    user_id = data.get('user_id')
-    message = data.get('message')
-    if not user_id or not message:
-        return jsonify({'error': 'User ID and message are required'}), 400
-    new_message = Chat(user_id=user_id, message=message)
-    db.session.add(new_message)
-    db.session.commit()
-    return jsonify({'message': 'Message sent successfully'}), 201
+    data = request.json
+    user_id = data.get("user_id")
+    message = data.get("message")
+    role = data.get("role")  # 'user' or 'admin'
 
-@auth.route('/api/chat/<int:user_id>', methods=['GET'])
-def get_messages(user_id):
-    messages = Chat.query.filter_by(user_id=user_id).order_by(Chat.timestamp.asc()).all()
-    messages_data = [{
-        'message': msg.message,
-        'timestamp': msg.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-    } for msg in messages]
-    return jsonify(messages_data), 200
+    if not user_id or not message or not role:
+        return jsonify({"error": "Missing data"}), 400
+
+    chat_ref = db_firestore.collection("chat_messages")
+    
+    chat_ref.add({
+        "user_id": user_id,
+        "message": message,
+        "role": role,
+        "timestamp": firestore.SERVER_TIMESTAMP
+    })
+
+    return jsonify({"message": "Message sent successfully"}), 201
+
+
 
 
 # This route will create a link to add the reservation to Google Calendar
@@ -402,7 +404,7 @@ def update_notification_settings():
         print(e)
         return jsonify({"error": "Internal Server Error"}), 500
 
-]
+
 @auth.route('/api/notifications', methods=['GET'])
 def get_notifications():
     try:
