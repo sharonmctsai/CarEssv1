@@ -185,7 +185,10 @@ def send_confirmation_email(user_email, reservation):
         print(f"Response Headers: {response.headers}")
 
     except Exception as e:
-        print(f"Error sending confirmation email: {str(e)}")
+        import traceback
+        print("Error sending confirmation email:")
+        traceback.print_exc()
+
         
 @app.route('/api/confirm-booking/<int:reservation_id>', methods=['PUT'])
 def confirm_booking(reservation_id):
@@ -202,6 +205,18 @@ def confirm_booking(reservation_id):
 
         # Send a confirmation email to the user
         send_confirmation_email(reservation.user_email, reservation)
+
+     #Save booking confirmation info to Firebase Firestore
+        firebase_db.collection('emailConfirmations').add({
+            'user_email': reservation.user_email,
+            'service_type': reservation.service_type,
+            'date': reservation.date.strftime("%Y-%m-%d"),
+            'time': reservation.time.strftime("%H:%M"),
+            'car_model': reservation.car_model,
+            'license_plate': reservation.license_plate,
+            'status': 'confirmed',
+            'sent_at': datetime.utcnow()
+        })
 
         return jsonify({"message": "Reservation confirmed successfully."}), 200
     except Exception as e:

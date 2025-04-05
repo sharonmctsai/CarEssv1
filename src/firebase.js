@@ -6,13 +6,12 @@ import { getFirestore, collection, getDocs, addDoc, query, orderBy, onSnapshot }
 
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBf6zQ1FPc3xjo5bTDbJczNCGfxeC9NbM8",
-  authDomain: "caress-2025.firebaseapp.com",
-  projectId: "caress-2025",
-  storageBucket: "caress-2025.firebasestorage.app",
-  messagingSenderId: "611170789334",
-  appId: "1:611170789334:web:a6a308c8762bfebfb62677",
-  measurementId: "G-KBZ51MMHFD"
+  apiKey: "AIzaSyDtv4TYIOXxjh0t7ZjRf1fkyrvg5VOP_XA",
+  authDomain: "caress-449615.firebaseapp.com",
+  projectId: "caress-449615",
+  storageBucket: "caress-449615.firebasestorage.app",
+  messagingSenderId: "563323757566",
+  appId: "1:563323757566:web:098ecf4c41cfadcfe296af"
 };
 
 // Initialize Firebase
