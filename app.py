@@ -78,7 +78,7 @@ scheduler = BackgroundScheduler()
 
 def send_reminder_email(user_email, reservation):
     try:
-        print(f"Sending reminder email to {user_email}")  # Debug log
+        print(f"Sending reminder email to {user_email}")
 
         message = Mail(
             from_email='sharonmctsai@gmail.com',
@@ -92,20 +92,49 @@ def send_reminder_email(user_email, reservation):
                 Date: {reservation.date}<br>
                 Time: {reservation.time}<br>
                 Car Model: {reservation.car_model}<br>
-                License Plate: {reservation.license_plate}<br>
-                <br> If you have any questions or need assistance, you can reply to this email or call us at <a href="tel:+08001234567"> 0800-123-4567</a>.<br>
-                <br>
-
+                License Plate: {reservation.license_plate}<br><br>
+                If you have any questions or need assistance, reply to this email or call us at <a href="tel:+08001234567">0800-123-4567</a>.<br><br>
                 Thank you for choosing CarEss!<br>
                 Regards,<br>
                 CarEss Team
             '''
         )
+
         sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
         response = sg.send(message)
         print(f"Reminder email sent! Status Code: {response.status_code}")
+
+        #  Add to Firestore
+        firebase_db.collection('reminderEmails').add({
+            'user_email': user_email,
+            'service_type': reservation.service_type,
+            'date': reservation.date.strftime("%Y-%m-%d"),
+            'time': reservation.time.strftime("%H:%M"),
+            'car_model': reservation.car_model,
+            'license_plate': reservation.license_plate,
+            'sent_at': datetime.utcnow()
+        })
+
     except Exception as e:
         print(f"Error sending reminder email: {str(e)}")
+
+@app.route('/api/test-reminder-email/<int:reservation_id>', methods=['PUT'])
+def test_reminder_email(reservation_id):
+    print(f"Testing reminder email for reservation ID: {reservation_id}")  # Debugging
+    try:
+        # Fetch the reservation from the database
+        reservation = Reservation.query.get(reservation_id)
+        if not reservation:
+            return jsonify({"error": "Reservation not found."}), 404
+
+        # Trigger sending reminder email
+        send_reminder_email(reservation.user_email, reservation)
+
+        return jsonify({"message": "Reminder email sent successfully."}), 200
+    except Exception as e:
+        print(f"Error triggering reminder email: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
 def check_and_send_reminders():
     with app.app_context():
@@ -189,7 +218,8 @@ def send_confirmation_email(user_email, reservation):
         print("Error sending confirmation email:")
         traceback.print_exc()
 
-        
+
+
 @app.route('/api/confirm-booking/<int:reservation_id>', methods=['PUT'])
 def confirm_booking(reservation_id):
     print(f"Confirming booking for reservation ID: {reservation_id}")  # Debugging
@@ -223,6 +253,26 @@ def confirm_booking(reservation_id):
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
     
+@app.route('/api/update-reservation-status', methods=['POST'])
+def update_reservation_status():
+    data = request.get_json()
+    reservation_id = data.get("id")
+    new_status = data.get("status")
+
+    # Find the reservation in the database
+    reservation = Reservation.query.get(reservation_id)
+    if not reservation:
+        return jsonify({"error": "Reservation not found"}), 404
+
+    reservation.status = new_status
+    db.session.commit()
+
+    # If status changed to Confirmed, send confirmation email
+    if new_status.lower() == "confirmed":
+        print(f"Sending confirmation email to {reservation.user_email}")  # Debug log
+        send_confirmation_email(reservation.user_email, reservation)
+
+    return jsonify({"message": "Reservation status updated successfully"}), 200
 
 
 # Initialize the database
