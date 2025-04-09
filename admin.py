@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import db, Chat  # Ensure your Chat model exists in models.py
+from models import db, Chat py
 
 admin = Blueprint('admin', __name__)  # Define admin Blueprint
 

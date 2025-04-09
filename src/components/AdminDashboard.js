@@ -10,7 +10,6 @@ function AdminDashboard() {
     const [error, setError] = useState(null);
     const navigate = useNavigate(); 
 
-    // 取得所有預約資料
     useEffect(() => {
         fetch('http://localhost:5002/api/all-reservations')
             .then(res => res.json())

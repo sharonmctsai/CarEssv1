@@ -22,7 +22,7 @@ function Reservation() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // 取得服務項目列表
+    
     useEffect(() => {
         fetch('http://localhost:5002/api/service-items')
             .then(res => res.json())
@@ -30,7 +30,6 @@ function Reservation() {
             .catch(err => console.error("Error fetching service items:", err));
     }, []);
 
-    // 根據所選日期獲取可用時段
     useEffect(() => {
         if (formData.date) {
             fetch(`http://localhost:5002/api/available-times?date=${formData.date}`)

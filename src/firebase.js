@@ -4,7 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 
-// Your Firebase configuration
+//  Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDtv4TYIOXxjh0t7ZjRf1fkyrvg5VOP_XA",
   authDomain: "caress-449615.firebaseapp.com",

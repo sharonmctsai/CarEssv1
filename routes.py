@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 auth = Blueprint('auth', __name__)
 
-# Replace with your Google OAuth client ID
 GOOGLE_CLIENT_ID = "563323757566-3e1vbodsphja2bhf1scveb678dihb5lu.apps.googleusercontent.com"
 
 
@@ -22,11 +21,11 @@ def update_profile():
     user = User.query.filter_by(email=data["email"]).first()  # Find user by email
 
     if user:
-        user.name = data["name"]  # ✅ Update username
+        user.name = data["name"]  #  Update username
         if data["password"]:
             user.password = hash_password(data["password"])  # Hash new password
         
-        db.session.commit()  # ✅ Save changes to the database
+        db.session.commit()  #  Save changes to the database
         return jsonify({"message": "Profile updated", "name": user.name, "email": user.email}), 200
     else:
         return jsonify({"error": "User not found"}), 404
@@ -176,7 +175,7 @@ def login():
         password = data.get('password')
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
-            is_admin = (email == "admin@example.com")  # 簡單判斷 admin 帳號
+            is_admin = (email == "admin@example.com")  
             return jsonify({
                 "message": "Login successful",
                 "is_admin": user.is_admin,

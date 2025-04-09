@@ -3,7 +3,7 @@ import { Container, Form, Button, Spinner, Card } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { FaSyncAlt, FaArrowLeft } from 'react-icons/fa';
-import "./EditReservation.css"; // Add a CSS file for styling
+import "./EditReservation.css"; 
 
 function EditReservation() {
     const { user } = useContext(UserContext);

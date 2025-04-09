@@ -2,12 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Container, ListGroup, Form, Button, Spinner, Alert } from 'react-bootstrap';
 import { FaPaperPlane, FaUser, FaUserShield } from 'react-icons/fa';
 import './ChatBox.css';
-import { UserContext } from '../context/UserContext'; // Assuming you are using a context to get the user
+import { UserContext } from '../context/UserContext'; //  using a context to get the user
 import { db } from '../firebase'; // Firebase configuration
 import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 function ChatBox() {
-    const { user } = useContext(UserContext);  // Assuming you're using a context to get the logged-in user
+    const { user } = useContext(UserContext);  // using a context to get the logged-in user
     const userId = user?.id || JSON.parse(localStorage.getItem('user'))?.id;
 
     const [messages, setMessages] = useState([]);

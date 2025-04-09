@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Button, Alert, Table, Spinner, Badge, Navbar
 import { Link, useNavigate } from 'react-router-dom';
 import { FaCalendarCheck, FaClock, FaTimesCircle, FaSignOutAlt,FaUserEdit, FaHome, FaCalendarPlus} from 'react-icons/fa';
 import { UserContext } from '../context/UserContext';
-import './UserDashboard.css';  // Import the new CSS file
+import './UserDashboard.css';  
 import { FaBell } from 'react-icons/fa';
 
 function UserDashboard() {

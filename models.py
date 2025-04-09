@@ -23,7 +23,7 @@ class Reservation(db.Model):
     service_type = db.Column(db.String(80), nullable=False)
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.Time, nullable=False)
-    status = db.Column(db.String(20), default='Pending')  # 預約狀態
+    status = db.Column(db.String(20), default='Pending')  
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     car_model = db.Column(db.String(80), nullable=True)

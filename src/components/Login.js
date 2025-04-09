@@ -24,7 +24,7 @@ function Login() {
     const location = useLocation(); // Get location state
 
     useEffect(() => {
-        // Show toast if user is redirected from a protected route
+        // Show toast 
         if (location.state?.from) {
             toast.warn('Please log in to continue.', { autoClose: 3000 });
         }
@@ -34,9 +34,6 @@ function Login() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-
-
-    
     const togglePasswordVisibility = () => {
         setShowPassword((prev) => !prev);
     };
@@ -74,7 +71,7 @@ function Login() {
     
             if (response.ok) {
                 const result = await response.json();
-                console.log("Login Response:", result);  // <-- ADD THIS LINE
+                console.log("Login Response:", result);  
 
                 // Save user details to localStorage
                 localStorage.setItem('user', JSON.stringify({ 
@@ -143,8 +140,6 @@ function Login() {
             toast.error("Network error. Please try again.");
         }
     };
-
-    
 
         // Cancel button handler (navigates to home page)
         const handleCancel = () => {
